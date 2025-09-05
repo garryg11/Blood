@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
+
 interface FlagChipProps {
   flag?: 'none' | 'caution' | 'urgent';
 }
 
 const FlagChip = ({ flag }: FlagChipProps) => {
+  const { t } = useTranslation();
   if (!flag || flag === 'none') return null;
 
   const chipStyles = {
@@ -11,8 +14,8 @@ const FlagChip = ({ flag }: FlagChipProps) => {
   };
 
   const chipText = {
-    'caution': 'Caution',
-    'urgent': 'Urgent'
+    'caution': t('flag.caution'),
+    'urgent': t('flag.urgent')
   };
 
   return (

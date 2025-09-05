@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useResults } from '../contexts/ResultsContext';
 import LangSwitch from '../components/LangSwitch';
 import SafetyBanner from '../components/SafetyBanner';
@@ -7,6 +8,7 @@ import AnalyteTable from '../components/AnalyteTable';
 
 const Results = () => {
   const { results } = useResults();
+  const { t } = useTranslation();
 
   if (!results) {
     return (
@@ -35,7 +37,7 @@ const Results = () => {
               className="inline-block text-xl text-[#007aff] hover:text-[#0056b3] transition-colors duration-200 font-medium"
               data-testid="go-to-upload-link"
             >
-              Go to Upload
+              {t('empty.goUpload')}
             </Link>
           </div>
         </main>

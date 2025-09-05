@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
+
 interface LevelBadgeProps {
   level?: 'low' | 'in-range' | 'high';
 }
 
 const LevelBadge = ({ level }: LevelBadgeProps) => {
+  const { t } = useTranslation();
   if (!level) return null;
 
   const badgeStyles = {
@@ -12,9 +15,9 @@ const LevelBadge = ({ level }: LevelBadgeProps) => {
   };
 
   const badgeText = {
-    'low': 'Low',
-    'in-range': 'In-range',
-    'high': 'High'
+    'low': t('badge.low'),
+    'in-range': t('badge.inRange'),
+    'high': t('badge.high')
   };
 
   return (

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LevelBadge from './LevelBadge';
 import FlagChip from './FlagChip';
 
@@ -23,6 +24,7 @@ interface AnalyteTableProps {
 
 const AnalyteTable = ({ rows }: AnalyteTableProps) => {
   const [expandedSources, setExpandedSources] = useState<Set<number>>(new Set());
+  const { t } = useTranslation();
 
   const toggleSources = (index: number) => {
     const newExpanded = new Set(expandedSources);
@@ -36,9 +38,9 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
   if (!rows || rows.length === 0) {
     return (
       <div className="bg-white rounded-2xl p-8 mb-8" data-testid="analyte-table">
-        <h2 className="text-2xl font-bold text-[#1d1d1f] mb-6">Lab Values</h2>
+        <h2 className="text-2xl font-bold text-[#1d1d1f] mb-6">{t('table.heading')}</h2>
         <p className="text-[#86868b] text-lg" data-testid="no-analytes-message">
-          No analytes detected.
+          {t('table.noRows')}
         </p>
       </div>
     );
@@ -46,7 +48,7 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
 
   return (
     <div className="bg-white rounded-2xl p-8 mb-8" data-testid="analyte-table">
-      <h2 className="text-2xl font-bold text-[#1d1d1f] mb-6">Lab Values</h2>
+      <h2 className="text-2xl font-bold text-[#1d1d1f] mb-6">{t('table.heading')}</h2>
       
       <div className="space-y-4">
         {rows.map((row, index) => (
@@ -75,7 +77,7 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
             {row.refRange && (row.refRange.low !== undefined || row.refRange.high !== undefined) && (
               <div className="mb-2">
                 <span className="text-[#86868b] text-base">
-                  Range: {row.refRange.low !== undefined ? row.refRange.low : '—'}–{row.refRange.high !== undefined ? row.refRange.high : '—'}{row.refRange.unit ? ` ${row.refRange.unit}` : ''}
+                  {t('table.range')}: {row.refRange.low !== undefined ? row.refRange.low : '—'}–{row.refRange.high !== undefined ? row.refRange.high : '—'}{row.refRange.unit ? ` ${row.refRange.unit}` : ''}
                 </span>
               </div>
             )}
@@ -104,7 +106,7 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
                   className="text-[#007aff] text-sm font-medium hover:text-[#0056b3] transition-colors duration-200"
                   data-testid={`show-sources-button-${index}`}
                 >
-                  {expandedSources.has(index) ? 'Hide sources' : 'Show sources'}
+                  {expandedSources.has(index) ? t('table.hideSources') : t('table.showSources')}
                 </button>
                 {expandedSources.has(index) && (
                   <div className="mt-2 space-y-1" data-testid={`sources-list-${index}`}>

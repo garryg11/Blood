@@ -25,7 +25,7 @@ def run_frontend():
         # Install dependencies first
         subprocess.run(["npm", "install"], cwd="frontend", check=True)
         # Run Vite dev server
-        cmd = ["npx", "vite", "--host", "0.0.0.0", "--port", "3000"]
+        cmd = ["npx", "vite", "--host", "0.0.0.0", "--port", "5000"]
         subprocess.run(cmd, cwd="frontend", check=True)
     except KeyboardInterrupt:
         print("Frontend stopped")
@@ -34,7 +34,7 @@ def run_frontend():
 
 if __name__ == "__main__":
     print("🚀 Starting PlainSpeak Labs development servers...")
-    print("📱 Frontend will be available at: http://localhost:3000")
+    print("📱 Frontend will be available at: http://localhost:5000")
     print("🔧 Backend API will be available at: http://localhost:8000")
     print("📖 API docs will be available at: http://localhost:8000/docs")
     print()

@@ -24,9 +24,12 @@ def run_frontend():
     try:
         # Install dependencies first
         subprocess.run(["npm", "install"], cwd="frontend", check=True)
-        # Run Vite dev server
+        # Run Vite dev server with proper environment
+        import os
+        env = os.environ.copy()
+        env["DANGEROUSLY_DISABLE_HOST_CHECK"] = "true"
         cmd = ["npx", "vite", "--host", "0.0.0.0", "--port", "5000"]
-        subprocess.run(cmd, cwd="frontend", check=True)
+        subprocess.run(cmd, cwd="frontend", check=True, env=env)
     except KeyboardInterrupt:
         print("Frontend stopped")
     except Exception as e:

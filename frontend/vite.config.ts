@@ -6,8 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5000,
-    host: '0.0.0.0',
-    allowedHosts: 'all'
+    host: '0.0.0.0'
   },
   resolve: {
     alias: {

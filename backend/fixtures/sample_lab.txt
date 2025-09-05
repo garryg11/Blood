@@ -1,0 +1,9 @@
+Laboratory Report
+
+Patient: John Doe
+Date: 2024-01-15
+
+Test Results:
+Hemoglobin: 14.1 g/dL (Normal: 13.5-17.5)
+Total Cholesterol: 185 mg/dL (Normal: <200)
+HDL Cholesterol: 45 mg/dL (Normal: >40)

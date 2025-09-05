@@ -54,7 +54,7 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
         {rows.map((row, index) => (
           <div 
             key={index} 
-            className="bg-[#f5f5f7] rounded-xl p-6 shadow-sm"
+            className="bg-[#f5f5f7] rounded-xl p-6 shadow-sm border-b border-gray-200 last:border-b-0"
             data-testid={`analyte-card-${index}`}
           >
             {/* Name and Value Row */}
@@ -103,7 +103,8 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
               <div>
                 <button
                   onClick={() => toggleSources(index)}
-                  className="text-[#007aff] text-sm font-medium hover:text-[#0056b3] transition-colors duration-200"
+                  className="text-[#007aff] text-sm font-medium hover:text-[#0056b3] transition-colors duration-200 min-h-[44px] px-2 -mx-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007aff] focus-visible:ring-offset-2 rounded-lg"
+                  aria-label={expandedSources.has(index) ? t('table.hideSources') : t('table.showSources')}
                   data-testid={`show-sources-button-${index}`}
                 >
                   {expandedSources.has(index) ? t('table.hideSources') : t('table.showSources')}

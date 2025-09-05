@@ -9,9 +9,9 @@ const LevelBadge = ({ level }: LevelBadgeProps) => {
   if (!level) return null;
 
   const badgeStyles = {
-    'low': 'bg-amber-50 text-amber-700 border border-amber-200',
-    'in-range': 'bg-green-50 text-green-700 border border-green-200', 
-    'high': 'bg-red-50 text-red-700 border border-red-200'
+    'low': 'bg-amber-100 text-amber-800 border border-amber-300',
+    'in-range': 'bg-green-100 text-green-800 border border-green-300', 
+    'high': 'bg-red-100 text-red-800 border border-red-300'
   };
 
   const badgeText = {

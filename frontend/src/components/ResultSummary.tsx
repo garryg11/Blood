@@ -36,7 +36,8 @@ const ResultSummary = ({ text }: ResultSummaryProps) => {
       {shouldTruncate && (
         <button
           onClick={() => setShowMore(!showMore)}
-          className="text-[#007aff] font-medium text-lg hover:text-[#0056b3] transition-colors duration-200"
+          className="text-[#007aff] font-medium text-lg hover:text-[#0056b3] transition-colors duration-200 min-h-[44px] px-2 -mx-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007aff] focus-visible:ring-offset-2 rounded-lg"
+          aria-label={showMore ? t('summary.showLess') : t('summary.showMore')}
           data-testid="show-more-button"
         >
           {showMore ? t('summary.showLess') : t('summary.showMore')}

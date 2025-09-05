@@ -3,6 +3,7 @@ import { useResults } from '../contexts/ResultsContext';
 import LangSwitch from '../components/LangSwitch';
 import SafetyBanner from '../components/SafetyBanner';
 import ResultSummary from '../components/ResultSummary';
+import AnalyteTable from '../components/AnalyteTable';
 
 const Results = () => {
   const { results } = useResults();
@@ -66,6 +67,7 @@ const Results = () => {
         <div className="w-full max-w-4xl mx-auto">
           <SafetyBanner />
           <ResultSummary text={results.text} />
+          <AnalyteTable rows={results.fields} />
         </div>
       </main>
     </div>

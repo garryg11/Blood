@@ -1,7 +1,7 @@
 import os
 import tempfile
 from typing import List
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Query
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -12,11 +12,19 @@ class ExtractionResponse(BaseModel):
     warnings: List[str] = []
 
 @router.post("/", response_model=ExtractionResponse)
-async def extract_text(file: UploadFile = File(...)):
+async def extract_text(file: UploadFile = File(None), demo: bool = Query(False)):
     """
-    Extract text from uploaded PDF or image file.
+    Extract text from uploaded PDF or image file, or return demo data.
     Returns stubbed data if extraction libraries are not available.
     """
+    # Handle demo mode
+    if demo:
+        return ExtractionResponse(
+            text="Laboratory Report\nPatient: Demo Patient\nDate: 2024-01-15\n\nTest Results:\nHemoglobin: 14.1 g/dL (Normal: 13.5-17.5)\nTotal Cholesterol: 185 mg/dL (Normal: <200)\nHDL Cholesterol: 45 mg/dL (Normal: >40)\nLDL Cholesterol: 120 mg/dL (Normal: <130)\nGlucose: 95 mg/dL (Normal: 70-100)\nCreatinine: 1.0 mg/dL (Normal: 0.7-1.3)",
+            fields=[],
+            warnings=[]
+        )
+    
     # Validate file is provided
     if not file:
         return ExtractionResponse(

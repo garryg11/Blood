@@ -1,9 +1,72 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useResults } from '../contexts/ResultsContext';
+
+type UploadState = 'idle' | 'uploading' | 'processing' | 'done';
+
 const UploadCard = () => {
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploadState, setUploadState] = useState<UploadState>('idle');
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
+  const { setResults } = useResults();
+
+  const uploadFile = async (file: File) => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_URL}/extract/`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  };
+
+  const handleDemoMode = async () => {
+    setUploadState('processing');
+    setError('');
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/extract/?demo=true`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const results = await response.json();
+      setResults(results);
+      setUploadState('done');
+      navigate('/results');
+    } catch (err) {
+      setError('Demo mode failed. Please try again.');
+      setUploadState('idle');
+    }
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      console.log('File selected:', file.name);
-      // TODO: Handle file upload
+    if (!file) return;
+
+    setUploadState('uploading');
+    setError('');
+
+    try {
+      setUploadState('processing');
+      const results = await uploadFile(file);
+      setResults(results);
+      setUploadState('done');
+      navigate('/results');
+    } catch (err) {
+      setError('Upload failed. Please try again.');
+      setUploadState('idle');
     }
   };
 
@@ -38,12 +101,37 @@ const UploadCard = () => {
         
         <label
           htmlFor="file-upload"
-          className="inline-block w-full py-4 px-6 bg-[#007aff] text-white font-bold text-lg rounded-full cursor-pointer hover:bg-[#0056b3] transition-colors duration-200 active:scale-[0.98]"
+          className={`inline-block w-full py-4 px-6 text-white font-bold text-lg rounded-full transition-colors duration-200 active:scale-[0.98] ${
+            uploadState === 'idle' ? 'bg-[#007aff] hover:bg-[#0056b3] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
+          }`}
         >
-          Upload PDF/Image
+          {uploadState === 'idle' && 'Upload PDF/Image'}
+          {uploadState === 'uploading' && 'Uploading...'}
+          {uploadState === 'processing' && 'Processing...'}
+          {uploadState === 'done' && 'Complete!'}
         </label>
         
+        {/* Demo Mode Button */}
+        <button
+          onClick={handleDemoMode}
+          disabled={uploadState !== 'idle'}
+          className={`w-full mt-4 py-3 px-6 font-medium text-lg rounded-full border-2 transition-colors duration-200 ${
+            uploadState === 'idle' 
+              ? 'border-[#007aff] text-[#007aff] hover:bg-[#007aff] hover:text-white' 
+              : 'border-gray-300 text-gray-400 cursor-not-allowed'
+          }`}
+          data-testid="demo-mode-button"
+        >
+          Demo Mode
+        </button>
+        
         <p className="text-sm text-gray-500 mt-4">PDF, JPG, PNG files</p>
+        
+        {error && (
+          <p className="text-sm text-red-500 mt-2" data-testid="upload-error">
+            {error}
+          </p>
+        )}
       </div>
     </div>
   );

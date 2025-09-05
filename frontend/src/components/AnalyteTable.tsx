@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import LevelBadge from './LevelBadge';
+import FlagChip from './FlagChip';
+
 interface AnalyteRow {
   analyte: string;
   value?: number;
@@ -18,6 +22,17 @@ interface AnalyteTableProps {
 }
 
 const AnalyteTable = ({ rows }: AnalyteTableProps) => {
+  const [expandedSources, setExpandedSources] = useState<Set<number>>(new Set());
+
+  const toggleSources = (index: number) => {
+    const newExpanded = new Set(expandedSources);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedSources(newExpanded);
+  };
   if (!rows || rows.length === 0) {
     return (
       <div className="bg-white rounded-2xl p-8 mb-8" data-testid="analyte-table">
@@ -45,13 +60,14 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
               <h3 className="text-lg font-bold text-[#1d1d1f]" data-testid={`analyte-name-${index}`}>
                 {row.analyte}
               </h3>
-              <div className="text-right">
+              <div className="text-right flex items-center gap-2">
                 <span className="text-lg font-semibold text-[#1d1d1f]" data-testid={`analyte-value-${index}`}>
                   {row.value !== undefined ? row.value : '—'}
                   {row.unit && (
                     <span className="text-[#86868b] ml-1">{row.unit}</span>
                   )}
                 </span>
+                <LevelBadge level={row.level} />
               </div>
             </div>
 
@@ -66,10 +82,47 @@ const AnalyteTable = ({ rows }: AnalyteTableProps) => {
 
             {/* Message */}
             {row.message && (
-              <div>
+              <div className="mb-3">
                 <p className="text-[#515154] text-base" data-testid={`analyte-message-${index}`}>
                   {row.message}
                 </p>
+              </div>
+            )}
+
+            {/* Flag Chip */}
+            {row.flag && row.flag !== 'none' && (
+              <div className="mb-3">
+                <FlagChip flag={row.flag} />
+              </div>
+            )}
+
+            {/* Sources */}
+            {row.sources && row.sources.length > 0 && (
+              <div>
+                <button
+                  onClick={() => toggleSources(index)}
+                  className="text-[#007aff] text-sm font-medium hover:text-[#0056b3] transition-colors duration-200"
+                  data-testid={`show-sources-button-${index}`}
+                >
+                  {expandedSources.has(index) ? 'Hide sources' : 'Show sources'}
+                </button>
+                {expandedSources.has(index) && (
+                  <div className="mt-2 space-y-1" data-testid={`sources-list-${index}`}>
+                    {row.sources.map((source, sourceIndex) => (
+                      <div key={sourceIndex}>
+                        <a
+                          href={source}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-[#007aff] hover:text-[#0056b3] underline break-all"
+                          data-testid={`source-link-${index}-${sourceIndex}`}
+                        >
+                          {source}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

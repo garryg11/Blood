@@ -1,8 +1,23 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+interface AnalyteRow {
+  analyte: string;
+  value?: number;
+  unit?: string;
+  refRange?: {
+    low?: number;
+    high?: number;
+    unit?: string;
+  };
+  level?: 'low' | 'in-range' | 'high';
+  message?: string;
+  sources?: string[];
+  flag?: 'none' | 'caution' | 'urgent';
+}
+
 interface ExtractionResult {
   text: string;
-  fields: string[];
+  fields: AnalyteRow[];
   warnings: string[];
 }
 

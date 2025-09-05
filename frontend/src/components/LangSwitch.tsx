@@ -1,19 +1,19 @@
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
 const LangSwitch = () => {
-  const { i18n } = useTranslation();
+  const [currentLang, setCurrentLang] = useState('EN');
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'de' : 'en';
-    i18n.changeLanguage(newLang);
+    setCurrentLang(currentLang === 'EN' ? 'DE' : 'EN');
   };
 
   return (
     <button
       onClick={toggleLanguage}
-      className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+      className="text-[#111111] font-medium text-sm hover:text-[#007aff] transition-colors duration-200"
+      data-testid="lang-switch"
     >
-      {i18n.language === 'en' ? 'DE' : 'EN'}
+      {currentLang} | {currentLang === 'EN' ? 'DE' : 'EN'}
     </button>
   );
 };

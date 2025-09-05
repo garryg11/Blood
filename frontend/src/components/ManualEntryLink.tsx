@@ -1,20 +1,15 @@
-import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
-interface ManualEntryLinkProps {
-  onClick: () => void;
-}
-
-const ManualEntryLink = ({ onClick }: ManualEntryLinkProps) => {
-  const { t } = useTranslation();
-
+const ManualEntryLink = () => {
   return (
-    <div className="text-center mt-6">
-      <button
-        onClick={onClick}
-        className="text-blue-500 hover:text-blue-600 underline"
+    <div className="text-center mt-8">
+      <Link
+        to="/manual"
+        className="text-[#007aff] text-lg font-medium hover:text-[#0056b3] transition-colors duration-200"
+        data-testid="manual-entry-link"
       >
-        {t('manual')}
-      </button>
+        Enter values manually
+      </Link>
     </div>
   );
 };

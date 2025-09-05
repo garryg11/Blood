@@ -1,7 +1,7 @@
 function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-gray-900">PlainSpeak Labs</h1>
+      <h1 className="text-4xl font-bold text-gray-900">CoreVitals</h1>
     </div>
   );
 }

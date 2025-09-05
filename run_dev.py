@@ -36,7 +36,7 @@ def run_frontend():
         print(f"Frontend error: {e}")
 
 if __name__ == "__main__":
-    print("🚀 Starting PlainSpeak Labs development servers...")
+    print("🚀 Starting CoreVitals development servers...")
     print("📱 Frontend will be available at: http://localhost:5000")
     print("🔧 Backend API will be available at: http://localhost:8000")
     print("📖 API docs will be available at: http://localhost:8000/docs")

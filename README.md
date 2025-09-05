@@ -1,4 +1,4 @@
-# LabClear - Medical Lab Results Analysis Platform
+# CoreVitals - Medical Lab Results Analysis Platform
 
 A monorepo containing a FastAPI backend and React frontend for analyzing medical lab results and providing plain-language explanations.
 

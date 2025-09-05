@@ -4,29 +4,35 @@
 
 LabClear is a full-stack web application that provides plain-language explanations of medical laboratory results. The application allows users to upload lab result documents (PDF, JPG, PNG) or manually enter lab values to receive easy-to-understand interpretations with normal ranges, explanations, and medical context. The platform emphasizes privacy by processing data locally and provides multilingual support (English/German).
 
+**Recent Changes (September 2025)**: Restructured entire project into monorepo with FastAPI backend and React frontend, replacing the original Node.js/Express architecture.
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-## System Architecture
+## Project Architecture
+
+### Monorepo Structure
+- **backend/**: FastAPI application with Python endpoints
+- **frontend/**: React + TypeScript + Vite application
+- **shared/**: TypeScript interfaces and constants shared between frontend and backend
 
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript using Vite for build tooling
-- **Routing**: Wouter for client-side routing
-- **UI Components**: shadcn/ui component library built on Radix UI primitives
-- **Styling**: Tailwind CSS with CSS variables for theming and dark/light mode support
-- **State Management**: TanStack Query (React Query) for server state management
-- **Form Handling**: React Hook Form with Zod validation
-- **Internationalization**: Custom i18n implementation supporting English and German
+- **Routing**: Wouter for client-side routing (future implementation)
+- **UI Components**: Tailwind CSS with responsive design
+- **Styling**: Tailwind CSS with mobile-first approach
+- **State Management**: React hooks and context (TanStack Query planned)
+- **Form Handling**: React Hook Form with Zod validation (planned)
+- **Internationalization**: i18next with English and German support
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **Database ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL with Neon Database integration
-- **Session Management**: Express sessions with PostgreSQL session store
-- **API Design**: RESTful API with JSON responses
-- **File Processing**: Support for PDF, JPG, PNG file uploads up to 10MB
+- **Framework**: FastAPI with Python 3.11+
+- **Runtime**: Uvicorn ASGI server
+- **API Design**: RESTful API with JSON responses and automatic OpenAPI docs
+- **File Processing**: Support for PDF, JPG, PNG file uploads using pdfplumber, pytesseract, and Pillow
+- **Data Validation**: Pydantic models for request/response validation
+- **Medical Processing**: Stub implementations for text extraction and explanation generation
 
 ### Data Storage Solutions
 - **Primary Database**: PostgreSQL hosted on Neon Database

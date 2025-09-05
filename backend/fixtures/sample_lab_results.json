@@ -1,0 +1,38 @@
+[
+  {
+    "test_name": "Total Cholesterol",
+    "value": 185.0,
+    "unit": "mg/dL",
+    "normal_range": "< 200 mg/dL"
+  },
+  {
+    "test_name": "LDL Cholesterol",
+    "value": 145.0,
+    "unit": "mg/dL",
+    "normal_range": "< 100 mg/dL"
+  },
+  {
+    "test_name": "HDL Cholesterol",
+    "value": 52.0,
+    "unit": "mg/dL",
+    "normal_range": "> 40 mg/dL (men), > 50 mg/dL (women)"
+  },
+  {
+    "test_name": "Triglycerides",
+    "value": 120.0,
+    "unit": "mg/dL",
+    "normal_range": "< 150 mg/dL"
+  },
+  {
+    "test_name": "Fasting Glucose",
+    "value": 95.0,
+    "unit": "mg/dL",
+    "normal_range": "70-100 mg/dL"
+  },
+  {
+    "test_name": "HbA1c",
+    "value": 5.6,
+    "unit": "%",
+    "normal_range": "< 5.7%"
+  }
+]

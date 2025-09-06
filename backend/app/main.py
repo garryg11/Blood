@@ -45,6 +45,8 @@ class AnalysisResponse(BaseModel):
     summary: str
     notes: List[str] = []
 
+ALIASES = {"glucose":"Glucose","alt":"ALT","ast":"AST","got":"AST","hemoglobin":"Hemoglobin","hgb":"Hemoglobin"}
+
 REFS = {
     "Glucose": (70, 99, "mg/dL"),
     "ALT": (7, 55, "U/L"),
@@ -74,14 +76,21 @@ def analyze_pairs(pairs):
     summary = f"{hi} high, {lo} low, {total - hi - lo} normal."
     return AnalysisResponse(items=items, summary=summary, notes=[])
 
+def norm(name, value, unit):
+    u = unit.lower()
+    if name=="Glucose" and ("mmol" in u):
+        return value*18.0, "mg/dL"
+    return value, unit
+
 def parse_free_text(text: str):
     # Tiny parser for patterns like: "Glucose 108 mg/dL, ALT 42 U/L"
     pattern = r'(Glucose|ALT|AST|Hemoglobin)\s*[:\-]?\s*([0-9]+(?:\.[0-9]+)?)\s*([A-Za-z/%]+)'
     pairs = []
     for m in re.finditer(pattern, text, flags=re.I):
-        name = m.group(1).title()
+        name = ALIASES.get(m.group(1).lower(), m.group(1).title())
         value = float(m.group(2))
         unit = m.group(3)
+        value, unit = norm(name, value, unit)
         pairs.append((name, value, unit))
     return analyze_pairs(pairs)
 

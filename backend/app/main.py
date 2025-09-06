@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import extract
 from .routers import explain
@@ -26,6 +26,14 @@ app.add_middleware(
 @app.get("/", include_in_schema=False)
 def health():
     return {"status": "ok"}
+
+# Direct extract endpoints (both forms)
+@app.post("/extract")
+@app.post("/extract/")
+async def extract_direct(file: UploadFile = File(None), demo: bool = Query(False)):
+    """Direct extract endpoint - forwards to extract router logic"""
+    from .routers.extract import extract_text
+    return await extract_text(file=file, demo=demo)
 
 # Include routers
 app.include_router(extract.router, prefix="/extract")

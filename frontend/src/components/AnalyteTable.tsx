@@ -4,14 +4,13 @@ import LevelBadge from "./LevelBadge";
 import FlagChip from "./FlagChip";
 
 interface Row {
-  analyte: string;
-  value?: number;
-  unit?: string;
-  refRange?: { low?: number; high?: number; unit?: string };
-  level?: "low" | "in-range" | "high";
-  message?: string;
-  sources?: string[];
-  flag?: "none" | "caution" | "urgent";
+  name: string;
+  value: number;
+  unit: string;
+  ref_low?: number;
+  ref_high?: number;
+  flag: "low" | "normal" | "high" | "unknown";
+  explanation: string;
 }
 
 const AnalyteTable: React.FC<{ rows?: Row[] }> = ({ rows }) => {

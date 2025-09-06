@@ -1,0 +1,43 @@
+Step 5C — Frontend wire-up to /explain
+
+1) Add a tiny API helper:
+- Create frontend/src/lib/api.ts with:
+  - const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+  - export async function postExplain(items) → POST `${API}/explain` JSON
+  - (optional) export async function postExtract(file) used by UploadCard
+
+2) Create/extend a Results store (context):
+- frontend/src/store/results.tsx:
+  export interface Extracted { text: string; fields: any[]; warnings: string[] }
+  export interface Explained { items: any[]; warnings: string[] }
+  Provide { extracted, setExtracted, explained, setExplained, explaining, setExplaining }
+- Wrap <App/> with <ResultsProvider/> in main.tsx (if not already).
+
+3) Update UploadCard.tsx:
+- After successful /extract, call setExtracted(extractJson).
+- Immediately call postExplain(map from extractJson.fields to [{analyte, value, unit}]).
+- While awaiting, set explaining=true.
+- On success: setExplained(respJson); set explaining=false; navigate('/results').
+- Handle failure gracefully: set explaining=false; keep extracted; still navigate.
+
+4) Update Results.tsx:
+- Read { extracted, explained, explaining } from store.
+- Prefer explained?.items for AnalyteTable; fallback to extracted.fields.
+- Show small inline loader when explaining === true.
+- If explained?.warnings?.length, show calm notice (“Some items couldn’t be explained.”)
+
+5) Demo Mode:
+- When Demo button is clicked, if backend supports /extract?demo=1, reuse same flow:
+    - fetch extract demo → setExtracted → postExplain → setExplained → navigate
+  Else, create a local demo payload in UploadCard and run postExplain on it.
+
+6) i18n:
+- Add keys for:
+  - results.notice.partial: "Some items couldn’t be explained."
+  - results.loading.explain: "Analyzing values…"
+- Replace hard-coded strings in Results.tsx with t('…').
+
+7) Env:
+- Ensure frontend/.env.example has VITE_API_URL and README mentions it.
+
+Return: updated files (api.ts, results store, UploadCard, Results page), and a short commit message.

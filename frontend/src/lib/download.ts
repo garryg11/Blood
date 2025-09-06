@@ -1,10 +1,8 @@
 
-export async function downloadPdfFromSummary(body: any) {
-  const api =
-    (import.meta.env.VITE_API_URL || "http://localhost:8000") +
-    "/export/summary";
+const API_BASE = "/api";
 
-  const res = await fetch(api, {
+export async function downloadPdfFromSummary(body: any) {
+  const res = await fetch(`${API_BASE}/export/summary`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

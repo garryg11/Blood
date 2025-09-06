@@ -194,3 +194,17 @@ async def extract_file(file: UploadFile = File(...)):
 @app.get("/health")
 def health_check(): 
     return {"status":"ok"}
+
+from fastapi import Query
+
+@app.post("/debug-ocr")
+async def debug_ocr(file: UploadFile = File(...), maxchars: int = Query(500)):
+    raw = await file.read()
+    if file.content_type == "application/pdf":
+        text = _extract_text_from_pdf(raw)
+    elif file.content_type in {"image/png","image/jpeg"}:
+        img = Image.open(io.BytesIO(raw))
+        text = _ocr_image(img)
+    else:
+        raise HTTPException(415, "Only PDF/PNG/JPG")
+    return {"len": len(text), "head": text[:maxchars]}

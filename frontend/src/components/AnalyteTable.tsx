@@ -28,7 +28,7 @@ const AnalyteTable: React.FC<{ rows?: Row[]; summary?: string }> = ({ rows, summ
       {rows.map((r, idx) => (
         <div key={idx} className="rounded-xl bg-white shadow-sm p-4">
           <div className="flex items-center justify-between">
-            <span className="font-semibold">{r.name}</span>
+            <span className="font-semibold">{t(`medical.analytes.${r.name}`) || r.name}</span>
             <div className="flex items-center gap-2">
               <span>{r.value} <span className="text-gray-500">{r.unit}</span></span>
               <LevelBadge flag={r.flag} />
@@ -40,7 +40,7 @@ const AnalyteTable: React.FC<{ rows?: Row[]; summary?: string }> = ({ rows, summ
             </div>
           )}
           {r.explanation && (
-            <div className="text-sm text-gray-600 mt-2">{r.explanation}</div>
+            <div className="text-sm text-gray-600 mt-2">{t(`medical.explanations.${r.explanation}`) || r.explanation}</div>
           )}
         </div>
       ))}

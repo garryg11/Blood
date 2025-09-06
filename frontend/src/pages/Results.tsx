@@ -4,6 +4,7 @@ import { useResults } from "../store/results";
 import SafetyBanner from "../components/SafetyBanner";
 import ResultSummary from "../components/ResultSummary";
 import AnalyteTable from "../components/AnalyteTable";
+import LanguageToggle from "../components/LanguageToggle";
 import { downloadPdfFromSummary } from "../lib/download";
 
 const Results: React.FC = () => {
@@ -36,7 +37,8 @@ const Results: React.FC = () => {
   return (
     <div className="p-4 space-y-4">
       <SafetyBanner />
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <LanguageToggle />
         <button
           onClick={handleExport}
           className="text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50"

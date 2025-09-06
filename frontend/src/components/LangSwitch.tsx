@@ -1,21 +1,14 @@
-import { useState } from 'react';
 
-const LangSwitch = () => {
-  const [currentLang, setCurrentLang] = useState('EN');
+import React from "react";
+import i18n from "../i18n";
 
-  const toggleLanguage = () => {
-    setCurrentLang(currentLang === 'EN' ? 'DE' : 'EN');
-  };
-
+const LangSwitch: React.FC = () => {
+  const cur = i18n.language.startsWith("de") ? "de" : "en";
+  function toggle() { i18n.changeLanguage(cur === "en" ? "de" : "en"); }
   return (
-    <button
-      onClick={toggleLanguage}
-      className="text-[#111111] font-medium text-sm hover:text-[#007aff] transition-colors duration-200"
-      data-testid="lang-switch"
-    >
-      {currentLang} | {currentLang === 'EN' ? 'DE' : 'EN'}
+    <button onClick={toggle} className="text-sm px-2 py-1 border rounded">
+      {cur.toUpperCase()} | {(cur === "en" ? "de" : "en").toUpperCase()}
     </button>
   );
 };
-
 export default LangSwitch;

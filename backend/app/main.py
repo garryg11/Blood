@@ -169,7 +169,6 @@ async def extract_file(file: UploadFile = File(...)):
         raise HTTPException(415, "Only PDF, PNG, or JPG allowed")
 
     raw = await file.read()
-
     if file.content_type == "application/pdf":
         text = _extract_text_from_pdf(raw)
     else:
@@ -179,7 +178,18 @@ async def extract_file(file: UploadFile = File(...)):
     if not text or len(text.strip()) < 10:
         raise HTTPException(400, "Could not extract text from file")
 
-    return parse_free_text(text)
+    result = parse_free_text(text)
+    if not result.items:
+        # We read the file but didn't recognize lab values—return 200 with a helpful summary.
+        return AnalysisResponse(
+            items=[],
+            summary="We could read the file, but didn't detect recognizable lab values.",
+            notes=[
+                "Try a sharper scan or a digital PDF.",
+                "Supported examples: 'Glucose 108 mg/dL', 'ALT 42 U/L', 'AST 35 U/L', 'Hemoglobin 14.1 g/dL'."
+            ],
+        )
+    return result
 
 @app.get("/health")
 def health_check(): 

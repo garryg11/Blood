@@ -40,3 +40,34 @@ def build_summary_pdf(*, app_name: str, locale: str, extracted_text: str, explai
     snippet = (extracted_text or "")[:800]
     writeln(snippet or "(none)", size=9, leading=12)
     y -= 6
+
+    # Analytes
+    c.setFont("Helvetica-Bold", 12)
+    writeln("Analytes", size=12, leading=16)
+    c.setFont("Helvetica", 9)
+    if not explained_items:
+        writeln("(no analytes)", size=9, leading=12)
+    else:
+        for it in explained_items:
+            name = it.get("analyte","?")
+            val  = it.get("value")
+            unit = it.get("unit","")
+            lvl  = it.get("level","")
+            rr   = it.get("refRange") or {}
+            msg  = it.get("message","")
+            line1 = f"• {name}: {val} {unit}  —  Level: {lvl}"
+            line2 = f"   Range: {rr.get('low')}–{rr.get('high')} {rr.get('unit','')}"
+            writeln(line1, size=9, leading=12)
+            writeln(line2, size=9, leading=12)
+            if msg:
+                writeln(f"   Note: {msg}", size=9, leading=12)
+            srcs = it.get("sources") or []
+            if srcs:
+                writeln("   Sources:", size=9, leading=12)
+                for s in srcs[:3]:
+                    writeln(f"     - {s}", size=9, leading=12)
+            y -= 4
+
+    c.showPage()
+    c.save()
+    return buf.getvalue()

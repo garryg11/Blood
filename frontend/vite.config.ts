@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    port: Number(process.env.PORT) || 5173,
+    port: Number(process.env.PORT) || 5000,
     allowedHosts: true,
     hmr: { clientPort: 443 },
     proxy: {

@@ -1,77 +1,39 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useResults } from '../contexts/ResultsContext';
-import LangSwitch from '../components/LangSwitch';
-import SafetyBanner from '../components/SafetyBanner';
-import ResultSummary from '../components/ResultSummary';
-import AnalyteTable from '../components/AnalyteTable';
+import React from "react";
+import { useResults } from "../store/results";
+import SafetyBanner from "../components/SafetyBanner";
+import ResultSummary from "../components/ResultSummary";
+import AnalyteTable from "../components/AnalyteTable";
 
-const Results = () => {
-  const { results } = useResults();
-  const { t } = useTranslation();
+const Results: React.FC = () => {
+  const { extracted, explained, explaining } = useResults();
 
-  if (!results) {
+  if (!extracted) {
     return (
-      <div className="min-h-screen bg-[#f5f5f7] flex flex-col">
-        <header className="w-full py-6 px-8 flex justify-between items-center">
-          <Link 
-            to="/" 
-            className="text-[#007aff] text-lg font-medium hover:text-[#0056b3] transition-colors duration-200 min-h-[44px] flex items-center px-2 -mx-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007aff] focus-visible:ring-offset-2 rounded-lg"
-            data-testid="back-home-link"
-          >
-            ← Back
-          </Link>
-          <h1 className="text-2xl font-bold text-[#1d1d1f]" data-testid="app-title">
-            PlainSpeak Labs
-          </h1>
-          <div>
-            <LangSwitch />
-          </div>
-        </header>
-
-        <main className="flex-1 flex flex-col items-center justify-center px-8 pb-16">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-[#1d1d1f] mb-6">No results to display</h2>
-            <Link 
-              to="/" 
-              className="inline-block text-xl text-[#007aff] hover:text-[#0056b3] transition-colors duration-200 font-medium min-h-[44px] flex items-center px-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007aff] focus-visible:ring-offset-2 rounded-lg"
-              data-testid="go-to-upload-link"
-            >
-              {t('empty.goUpload')}
-            </Link>
-          </div>
-        </main>
+      <div className="p-6 text-center">
+        <a href="/" className="text-blue-600 underline">Go to Upload</a>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] flex flex-col">
-      {/* Top Bar */}
-      <header className="w-full py-6 px-8 flex justify-between items-center">
-        <Link 
-          to="/" 
-          className="text-[#007aff] text-lg font-medium hover:text-[#0056b3] transition-colors duration-200 min-h-[44px] flex items-center px-2 -mx-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007aff] focus-visible:ring-offset-2 rounded-lg"
-          data-testid="back-home-link"
-        >
-          ← Back
-        </Link>
-        <h1 className="text-2xl font-bold text-[#1d1d1f]" data-testid="app-title">
-          PlainSpeak Labs
-        </h1>
-        <div>
-          <LangSwitch />
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 px-8 pb-16">
-        <div className="w-full max-w-4xl mx-auto">
-          <SafetyBanner />
-          <ResultSummary text={results.text} />
-          <AnalyteTable rows={results.fields} />
-        </div>
-      </main>
+    <div className="p-4 space-y-4">
+      <SafetyBanner />
+      {explaining && (
+        <div className="text-sm text-gray-500">Analyzing values…</div>
+      )}
+      <ResultSummary text={extracted.text} />
+      {explained ? (
+        <>
+          {explained.warnings?.length > 0 && (
+            <div className="text-amber-600 text-sm">
+              Some items couldn't be explained.
+            </div>
+          )}
+          <AnalyteTable rows={explained.items} />
+        </>
+      ) : (
+        <AnalyteTable rows={extracted.fields || []} />
+      )}
     </div>
   );
 };

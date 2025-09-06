@@ -1,5 +1,11 @@
 from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
+import io, re
+import pdfplumber
+import fitz  # PyMuPDF
+from PIL import Image
+import pytesseract
+from fastapi import HTTPException
 
 app = FastAPI()
 
@@ -108,26 +114,62 @@ async def extract(payload: ExtractRequest):
 
 
 
-from fastapi import UploadFile, File, HTTPException
-import io
-import pdfplumber
-from PIL import Image
-import pytesseract
+def _extract_text_from_pdf(raw: bytes) -> str:
+    """Try embedded text first; if too little, OCR each page."""
+    text_parts = []
+
+    # Pass 1: embedded text via pdfplumber
+    try:
+        with pdfplumber.open(io.BytesIO(raw)) as pdf:
+            for p in pdf.pages:
+                t = p.extract_text() or ""
+                if t.strip():
+                    text_parts.append(t)
+    except Exception:
+        pass
+
+    if len(" ".join(text_parts)) >= 40:   # enough text -> stop here
+        return "\n".join(text_parts)
+
+    # Pass 2: OCR with PyMuPDF -> PIL -> Tesseract
+    ocr_parts = []
+    try:
+        doc = fitz.open(stream=raw, filetype="pdf")
+        # Limit to first 8 pages for speed/safety
+        for i, page in enumerate(doc):
+            if i >= 8: break
+            pix = page.get_pixmap(dpi=200)  # 200–300 is plenty
+            img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("L")  # grayscale
+            try:
+                ocr_parts.append(pytesseract.image_to_string(img, lang="eng+deu"))
+            except Exception:
+                # fallback if 'deu' traineddata isn't present
+                ocr_parts.append(pytesseract.image_to_string(img, lang="eng"))
+    except Exception as e:
+        # As a last resort, do nothing—handled below
+        pass
+
+    return "\n".join(ocr_parts).strip()
 
 @app.post("/extract-file", response_model=AnalysisResponse)
 async def extract_file(file: UploadFile = File(...)):
-    if file.content_type not in {"application/pdf","image/png","image/jpeg"}:
-        raise HTTPException(415, "Only PDF/PNG/JPG allowed")
+    if file.content_type not in {"application/pdf", "image/png", "image/jpeg"}:
+        raise HTTPException(415, "Only PDF, PNG, or JPG allowed")
+
     raw = await file.read()
-    text = ""
+
     if file.content_type == "application/pdf":
-        with pdfplumber.open(io.BytesIO(raw)) as pdf:
-            text = "\n".join((p.extract_text() or "") for p in pdf.pages)
+        text = _extract_text_from_pdf(raw)
     else:
         img = Image.open(io.BytesIO(raw))
-        text = pytesseract.image_to_string(img)
-    if not text or not text.strip():
+        try:
+            text = pytesseract.image_to_string(img, lang="eng+deu")
+        except Exception:
+            text = pytesseract.image_to_string(img, lang="eng")
+
+    if not text or len(text.strip()) < 10:
         raise HTTPException(400, "Could not extract text from file")
+
     return parse_free_text(text)
 
 @app.get("/health")

@@ -38,7 +38,7 @@ const AnalyteTable: React.FC<{ rows?: Row[] }> = ({ rows }) => {
               <FlagChip flag={row.flag} />
             </div>
           </div>
-          
+
           {row.refRange && (row.refRange.low !== undefined || row.refRange.high !== undefined) && (
             <div className="text-xs text-gray-500 mb-2">
               {t("table.range")}: {row.refRange.low ?? "—"}–{row.refRange.high ?? "—"}{row.refRange.unit ? ` ${row.refRange.unit}` : ""}
@@ -50,7 +50,7 @@ const AnalyteTable: React.FC<{ rows?: Row[] }> = ({ rows }) => {
           )}
 
           {row.sources && row.sources.length > 0 && (
-            <div>
+            <div className="mt-2">
               <button
                 onClick={() => setOpenRow(openRow === i ? null : i)}
                 className="text-sm text-blue-600 underline"

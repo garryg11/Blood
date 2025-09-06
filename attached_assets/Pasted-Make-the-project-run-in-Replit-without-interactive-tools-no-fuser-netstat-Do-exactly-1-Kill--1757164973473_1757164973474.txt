@@ -1,0 +1,64 @@
+Make the project run in Replit without interactive tools (no fuser/netstat). Do exactly:
+
+1) Kill any leftovers (don’t install new packages):
+- pkill -f uvicorn || true
+- pkill -f vite || true
+
+2) Overwrite `.replit` with:
+run = "bash -lc 'npm run dev:replit'"
+
+3) In the root `package.json`, set scripts (create if missing):
+{
+  "scripts": {
+    "dev:replit": "bash -lc 'set -e; pkill -f uvicorn || true; pkill -f vite || true; (cd backend && (python - <<PY || uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload) &); (cd frontend && vite --host 0.0.0.0 --port ${PORT:-5000}); wait'",
+    "dev": "npm run dev:replit"
+  }
+}
+# NOTE: Replace the uvicorn target automatically to the first that imports:
+# Try order: app.main:app -> main:app -> backend.main:app.
+# Implement by running this tiny Python check (PY heredoc) to print the correct module, else fall back to app.main:app:
+# PY
+# import importlib, sys
+# for m in ['app.main','main','backend.main']:
+#     try:
+#         importlib.import_module(m)
+#         print(m+':app')
+#         sys.exit(0)
+#     except Exception:
+#         pass
+# print('app.main:app')
+
+4) Ensure `frontend/vite.config.(ts|js)` has this server block (merge if file exists):
+import { defineConfig } from 'vite'
+export default defineConfig({
+  server: {
+    host: true,
+    port: Number(process.env.PORT) || 5000,
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:8000",
+        changeOrigin: true,
+        rewrite: p => p.replace(/^\/api/, "")
+      }
+    }
+  }
+})
+
+5) Frontend API calls must use the relative base to hit the proxy:
+const API_BASE = "/api";
+fetch(`${API_BASE}/extract`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "hello" }) })
+
+6) Backend:
+- Bind to 127.0.0.1:8000
+- Add (or keep) routes:
+  @app.get("/", include_in_schema=False) -> {"status":"ok"}
+  @app.post("/extract") and @app.post("/extract/")
+- Keep CORS middleware (ok even with proxy).
+
+7) Start:
+npm run dev:replit
+
+8) Paste the last 30 log lines and the Preview URL. Verify:
+- Opening the Preview root shows the frontend.
+- GET /api/ (proxy to backend /) returns {"status":"ok"}
+- POST /api/extract returns 200 with JSON.

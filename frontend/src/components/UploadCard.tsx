@@ -19,10 +19,13 @@ const UploadCard: React.FC = () => {
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files?.length) return;
+    
+    // When starting work
     setErr(null);
     setLoading(true);
-    const file = e.target.files[0];
     setExplaining(true);
+    
+    const file = e.target.files[0];
     
     try {
       const extractJson = await postExtract(file);
@@ -40,15 +43,18 @@ const UploadCard: React.FC = () => {
     } catch (e: any) {
       setErr("We couldn't process that file. Please try another or use Manual Entry.");
     } finally {
+      // When finishing (both in success/finally blocks)
       setLoading(false);
       setExplaining(false);
     }
   }
 
   async function handleDemo() {
+    // When starting work
+    setErr(null);
     setLoading(true);
     setExplaining(true);
-    setErr(null);
+    
     try {
       // Simple local demo payload
       const demoExtract = {
@@ -72,6 +78,7 @@ const UploadCard: React.FC = () => {
     } catch (e) { 
       setErr("Demo failed. Please try again."); 
     } finally { 
+      // When finishing (both in success/finally blocks)
       setLoading(false);
       setExplaining(false); 
     }

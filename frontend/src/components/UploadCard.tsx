@@ -100,9 +100,9 @@ const UploadCard: React.FC<{setBusy?: (busy: boolean) => void; setErr?: (err: st
       <div className="flex justify-center">
         <button
           onClick={handleDemo}
-          className="px-6 py-2 text-[#007aff] text-sm font-medium border border-[#007aff] rounded-full hover:bg-[#007aff] hover:text-white transition-colors duration-200 disabled:opacity-50 focus:outline-auto"
+          className="btn btn--secondary disabled:opacity-50 focus:outline-auto"
           disabled={isProcessing}
-          tabIndex={4}
+          tabIndex={3}
           aria-label="Try demo"
           data-testid="button-try-demo"
         >

@@ -11,7 +11,7 @@ const Home = () => {
       {/* Top Bar - 56px height */}
       <header className="w-full h-14 px-6 flex justify-between items-center">
         <div></div> {/* Empty left side */}
-        <h1 className="text-xl font-bold text-[#111111] focus:outline-auto" tabIndex={1} data-testid="app-title">
+        <h1 className="text-xl font-bold text-[#111111]" data-testid="app-title">
           PlainSpeak Labs
         </h1>
         <div>
@@ -28,7 +28,7 @@ const Home = () => {
               <h2 className="text-4xl font-bold text-[#111111] leading-tight" data-testid="hero-headline">
                 Your lab results, made clear.
               </h2>
-              <p className="text-lg text-[#666666] leading-relaxed">
+              <p className="text-lg font-normal text-[#666666] leading-relaxed">
                 Upload a PDF or photo. Get plain-language explanations in seconds.
               </p>
             </div>

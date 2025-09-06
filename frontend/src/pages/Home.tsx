@@ -11,7 +11,7 @@ const Home = () => {
       {/* Top Bar - 56px height */}
       <header className="w-full h-14 px-6 flex justify-between items-center">
         <div></div> {/* Empty left side */}
-        <h1 className="text-xl font-bold text-[#111111]" data-testid="app-title">
+        <h1 className="text-xl text-[#111111] header__brand" data-testid="app-title">
           PlainSpeak Labs
         </h1>
         <div>
@@ -25,10 +25,10 @@ const Home = () => {
           {/* Hero Section */}
           <div className="space-y-8">
             <div className="space-y-6">
-              <h2 className="text-4xl font-bold text-[#111111] leading-tight" data-testid="hero-headline">
+              <h2 className="h-hero text-[#111111]" data-testid="hero-headline">
                 Your lab results, made clear.
               </h2>
-              <p className="text-lg font-normal text-[#666666] leading-relaxed">
+              <p className="h-sub">
                 Upload a PDF or photo. Get plain-language explanations in seconds.
               </p>
             </div>
@@ -57,8 +57,8 @@ const Home = () => {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 px-6 text-center">
-        <div className="text-xs text-gray-400">
+      <footer className="w-full px-6 text-center">
+        <div className="footer-note">
           PlainSpeak Labs does not provide medical advice.
         </div>
       </footer>

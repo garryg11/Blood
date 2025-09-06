@@ -52,9 +52,36 @@
   --gap: 8px;
 }
 html,body{font-family:var(--font-sans); font-size:var(--text-body); line-height:var(--lh-body); color:#0a0a0a;}
-.h-hero{font-size:var(--text-hero); font-weight:800; letter-spacing:-0.02em;}
-.h-sub{font-size:var(--text-sub); color:#333;}
-.btn{border-radius:9999px; padding:10px 20px; font-weight:600; border:1px solid #e5e5e5; background:#111; color:#fff;}
-.btn--secondary{background:#fff; color:#111;}
+
+/* Brand */
+.header__brand { font-weight:600; letter-spacing:-0.01em; }
+
+/* Hero */
+.h-hero { font-size:var(--text-hero); font-weight:800; letter-spacing:-0.02em; }
+.h-sub  { font-size:var(--text-sub); color:#444; line-height:1.6; max-width:60ch; margin-inline:auto; }
+
+/* Dropzone */
+.dropzone {
+  border:2px dashed #e6e6e6; border-radius:16px; background:#fff;
+  transition:border-color .15s, background .15s;
+}
+.dropzone:hover { border-color:#bdbdbd; background:#fafafa; }
+.dropzone:focus-visible { outline:3px solid #0b70ff33; outline-offset:2px; }
+
+/* Buttons */
+.btn       { border-radius:9999px; font-weight:600; padding:10px 20px; }
+.btn--fill { background:#111; color:#fff; border:1px solid #e5e5e5; }
+.btn--outline { background:#fff; color:#111; border:1px solid #e5e5e5; }
+.btn--secondary{background:#fff; color:#111; border:1px solid #e5e5e5;}
 .link{color:#0b70ff; text-underline-offset:3px;}
+
+/* Lang toggle */
+.lang { border:1px solid #e6e6e6; border-radius:9999px; overflow:hidden; }
+.lang button { padding:6px 10px; font-weight:600; border:none; }
+.lang button[aria-pressed="true"] { background:#111; color:#fff; }
+.lang button[aria-pressed="false"] { background:#fff; color:#111; }
+
+/* Footer */
+.footer-note { font-size:12px; color:#9aa0a6; padding-bottom:24px; }
+
 .card{border:1px solid #e9e9e9; border-radius:var(--radius); padding:24px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.04);}

@@ -9,8 +9,8 @@ export default function Dropzone({onFile, accept="application/pdf,image/png,imag
          onDrop={onDrop}
          role="button" tabIndex={0}
          aria-label="Upload report"
-         className="card"
-         style={{borderStyle:"dashed", borderWidth:2, borderColor:hover?"#999":"#ddd", textAlign:"center", padding:28}}>
+         className="dropzone"
+         style={{textAlign:"center", padding:28}}>
       <div style={{fontWeight:600, marginBottom:6}}>Drag & drop your report</div>
       <div style={{color:"#555", marginBottom:12}}>PDF, JPG, PNG — max 10 MB</div>
       <label className="btn btn--secondary" style={{outline: "auto"}} tabIndex={2} aria-label="Upload report">

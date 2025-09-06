@@ -7,8 +7,23 @@ class LabResult(BaseModel):
     unit: str
     normal_range: Optional[str] = None
 
+class ExtractedField(BaseModel):
+    analyte: str
+    value: float
+    unit: str
+    confidence: float = 1.0
+
+class AnalyteItem(BaseModel):
+    analyte: str
+    value: float
+    unit: Optional[str] = None
+    sex: Optional[str] = None
+    age: Optional[int] = None
+
 class ExtractResponse(BaseModel):
-    results: List[LabResult]
+    text: str
+    fields: List[ExtractedField]
+    warnings: List[str]
 
 class ExplainRequest(BaseModel):
     items: List[AnalyteItem]

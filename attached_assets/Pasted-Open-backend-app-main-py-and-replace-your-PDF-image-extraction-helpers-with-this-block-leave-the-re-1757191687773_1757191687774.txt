@@ -1,0 +1,56 @@
+Open backend/app/main.py and replace your PDF/image extraction helpers with this block (leave the rest of your code intact):
+
+import io, re
+import pdfplumber, fitz
+from PIL import Image, ImageOps, ImageFilter
+import pytesseract
+
+def _ocr_image(img: Image.Image) -> str:
+    # Normalize for OCR
+    g = img.convert("L")
+    # Upscale slightly, sharpen, light threshold
+    w, h = g.size
+    g = g.resize((int(w*1.5), int(h*1.5)))
+    g = g.filter(ImageFilter.SHARPEN)
+    # Try normal + inverted (some scans are light-on-dark)
+    candidates = [g, ImageOps.invert(g)]
+    for im in candidates:
+        for psm in (6, 4, 11):  # block, sparse, sparse line
+            try:
+                txt = pytesseract.image_to_string(im, lang="eng+deu", config=f"--oem 3 --psm {psm}")
+            except Exception:
+                txt = pytesseract.image_to_string(im, lang="eng", config=f"--oem 3 --psm {psm}")
+            if len(txt.strip()) > 40:
+                return txt
+    # Return best-effort minimal text
+    try:
+        return pytesseract.image_to_string(g, lang="eng")
+    except Exception:
+        return ""
+
+def _extract_text_from_pdf(raw: bytes, max_pages: int = 8, dpi: int = 300) -> str:
+    # Pass 1: embedded text via pdfplumber
+    text_parts = []
+    try:
+        with pdfplumber.open(io.BytesIO(raw)) as pdf:
+            for p in pdf.pages[:max_pages]:
+                t = p.extract_text() or ""
+                if t.strip():
+                    text_parts.append(t)
+    except Exception:
+        pass
+    if len(" ".join(text_parts)) >= 60:
+        return "\n".join(text_parts)
+
+    # Pass 2: OCR pages (PyMuPDF rasterization)
+    ocr_parts = []
+    try:
+        doc = fitz.open(stream=raw, filetype="pdf")
+        for i, page in enumerate(doc):
+            if i >= max_pages: break
+            pix = page.get_pixmap(dpi=dpi)      # 300dpi for cleaner OCR
+            img = Image.open(io.BytesIO(pix.tobytes("png")))
+            ocr_parts.append(_ocr_image(img))
+    except Exception:
+        pass
+    return "\n".join(ocr_parts).strip()

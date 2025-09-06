@@ -1,9 +1,8 @@
 from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 import io, re
-import pdfplumber
-import fitz  # PyMuPDF
-from PIL import Image
+import pdfplumber, fitz
+from PIL import Image, ImageOps, ImageFilter
 import pytesseract
 from fastapi import HTTPException
 
@@ -114,41 +113,54 @@ async def extract(payload: ExtractRequest):
 
 
 
-def _extract_text_from_pdf(raw: bytes) -> str:
-    """Try embedded text first; if too little, OCR each page."""
-    text_parts = []
+def _ocr_image(img: Image.Image) -> str:
+    # Normalize for OCR
+    g = img.convert("L")
+    # Upscale slightly, sharpen, light threshold
+    w, h = g.size
+    g = g.resize((int(w*1.5), int(h*1.5)))
+    g = g.filter(ImageFilter.SHARPEN)
+    # Try normal + inverted (some scans are light-on-dark)
+    candidates = [g, ImageOps.invert(g)]
+    for im in candidates:
+        for psm in (6, 4, 11):  # block, sparse, sparse line
+            try:
+                txt = pytesseract.image_to_string(im, lang="eng+deu", config=f"--oem 3 --psm {psm}")
+            except Exception:
+                txt = pytesseract.image_to_string(im, lang="eng", config=f"--oem 3 --psm {psm}")
+            if len(txt.strip()) > 40:
+                return txt
+    # Return best-effort minimal text
+    try:
+        return pytesseract.image_to_string(g, lang="eng")
+    except Exception:
+        return ""
 
+def _extract_text_from_pdf(raw: bytes, max_pages: int = 8, dpi: int = 300) -> str:
     # Pass 1: embedded text via pdfplumber
+    text_parts = []
     try:
         with pdfplumber.open(io.BytesIO(raw)) as pdf:
-            for p in pdf.pages:
+            for p in pdf.pages[:max_pages]:
                 t = p.extract_text() or ""
                 if t.strip():
                     text_parts.append(t)
     except Exception:
         pass
-
-    if len(" ".join(text_parts)) >= 40:   # enough text -> stop here
+    if len(" ".join(text_parts)) >= 60:
         return "\n".join(text_parts)
 
-    # Pass 2: OCR with PyMuPDF -> PIL -> Tesseract
+    # Pass 2: OCR pages (PyMuPDF rasterization)
     ocr_parts = []
     try:
         doc = fitz.open(stream=raw, filetype="pdf")
-        # Limit to first 8 pages for speed/safety
         for i, page in enumerate(doc):
-            if i >= 8: break
-            pix = page.get_pixmap(dpi=200)  # 200–300 is plenty
-            img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("L")  # grayscale
-            try:
-                ocr_parts.append(pytesseract.image_to_string(img, lang="eng+deu"))
-            except Exception:
-                # fallback if 'deu' traineddata isn't present
-                ocr_parts.append(pytesseract.image_to_string(img, lang="eng"))
-    except Exception as e:
-        # As a last resort, do nothing—handled below
+            if i >= max_pages: break
+            pix = page.get_pixmap(dpi=dpi)      # 300dpi for cleaner OCR
+            img = Image.open(io.BytesIO(pix.tobytes("png")))
+            ocr_parts.append(_ocr_image(img))
+    except Exception:
         pass
-
     return "\n".join(ocr_parts).strip()
 
 @app.post("/extract-file", response_model=AnalysisResponse)
@@ -162,10 +174,7 @@ async def extract_file(file: UploadFile = File(...)):
         text = _extract_text_from_pdf(raw)
     else:
         img = Image.open(io.BytesIO(raw))
-        try:
-            text = pytesseract.image_to_string(img, lang="eng+deu")
-        except Exception:
-            text = pytesseract.image_to_string(img, lang="eng")
+        text = _ocr_image(img)
 
     if not text or len(text.strip()) < 10:
         raise HTTPException(400, "Could not extract text from file")

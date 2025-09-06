@@ -37,6 +37,30 @@ const resources = {
       },
       export: {
         pdf: "Export PDF"
+      },
+      badge: {
+        low: "Low",
+        normal: "Normal", 
+        high: "High",
+        unknown: "Unknown"
+      },
+      medical: {
+        analytes: {
+          "Glucose": "Glucose",
+          "ALT": "ALT", 
+          "AST": "AST",
+          "Hemoglobin": "Hemoglobin"
+        },
+        explanations: {
+          "Within normal range.": "Within normal range.",
+          "Below the typical reference range.": "Below the typical reference range.",
+          "Above the typical range.": "Above the typical range.",
+          "Slightly above the typical range; consider a fasting re-test.": "Slightly above the typical range; consider a fasting re-test.",
+          "No reference range available.": "No reference range available."
+        }
+      },
+      language: {
+        toggle: "DE"
       }
     } 
   },
@@ -74,6 +98,30 @@ const resources = {
       },
       export: {
         pdf: "PDF exportieren"
+      },
+      badge: {
+        low: "Niedrig",
+        normal: "Normal",
+        high: "Hoch", 
+        unknown: "Unbekannt"
+      },
+      medical: {
+        analytes: {
+          "Glucose": "Glukose",
+          "ALT": "ALT",
+          "AST": "AST", 
+          "Hemoglobin": "Hämoglobin"
+        },
+        explanations: {
+          "Within normal range.": "Im Normbereich.",
+          "Below the typical reference range.": "Unter dem typischen Referenzbereich.",
+          "Above the typical range.": "Über dem typischen Bereich.",
+          "Slightly above the typical range; consider a fasting re-test.": "Leicht über dem typischen Bereich; nüchterne Wiederholung erwägen.",
+          "No reference range available.": "Kein Referenzbereich verfügbar."
+        }
+      },
+      language: {
+        toggle: "EN"
       }
     } 
   }

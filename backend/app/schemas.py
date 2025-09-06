@@ -11,7 +11,7 @@ class ExtractResponse(BaseModel):
     results: List[LabResult]
 
 class ExplainRequest(BaseModel):
-    items: List[AnalyteIn]
+    items: List[AnalyteItem]
 
 class LabExplanation(BaseModel):
     test_name: str

@@ -1,5 +1,4 @@
 
-import React from "react";
 import { useTranslation } from "react-i18next";
 
 type Flag = "low" | "normal" | "high" | "unknown" | undefined;

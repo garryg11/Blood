@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LevelBadge from "./LevelBadge";
 
@@ -14,7 +13,6 @@ interface Row {
 
 const AnalyteTable: React.FC<{ rows?: Row[]; summary?: string }> = ({ rows, summary }) => {
   const { t } = useTranslation();
-  const [openRow, setOpenRow] = useState<number | null>(null);
 
   if (!rows || rows.length === 0) {
     return <div className="text-sm text-gray-500">{t("table.noRows")}</div>;

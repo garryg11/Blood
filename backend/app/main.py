@@ -136,40 +136,56 @@ def _ocr_image(img: Image.Image) -> str:
     except Exception:
         return ""
 
-def _extract_text_from_pdf(raw: bytes, max_pages: int = 8, dpi: int = 300) -> str:
-    # Pass 1: embedded text via pdfplumber
-    text_parts = []
-    try:
-        with pdfplumber.open(io.BytesIO(raw)) as pdf:
-            for p in pdf.pages[:max_pages]:
-                t = p.extract_text() or ""
-                if t.strip():
-                    text_parts.append(t)
-    except Exception:
-        pass
-    if len(" ".join(text_parts)) >= 60:
-        return "\n".join(text_parts)
+# allow 'octet-stream' and detect pdf by header
+ALLOWED_CT = {"application/pdf","image/png","image/jpeg","application/octet-stream"}
 
-    # Pass 2: OCR pages (PyMuPDF rasterization)
-    ocr_parts = []
+def _extract_text_from_pdf(raw: bytes, max_pages=8, dpi=300) -> str:
+    import io, fitz, pdfplumber
+    from PIL import Image
+    parts = []
+
+    # Pass A: PyMuPDF embedded text (very reliable)
     try:
         doc = fitz.open(stream=raw, filetype="pdf")
         for i, page in enumerate(doc):
             if i >= max_pages: break
-            pix = page.get_pixmap(dpi=dpi)      # 300dpi for cleaner OCR
+            t = page.get_text("text") or ""
+            if t.strip(): parts.append(t)
+    except Exception: pass
+    if len(" ".join(parts)) >= 60:
+        return "\n".join(parts)
+
+    # Pass B: pdfplumber (sometimes different layout wins)
+    try:
+        with pdfplumber.open(io.BytesIO(raw)) as pdf:
+            for p in pdf.pages[:max_pages]:
+                t = p.extract_text() or ""
+                if t.strip(): parts.append(t)
+    except Exception: pass
+    if len(" ".join(parts)) >= 60:
+        return "\n".join(parts)
+
+    # Pass C: rasterize + OCR (fallback)
+    ocr = []
+    try:
+        doc = fitz.open(stream=raw, filetype="pdf")
+        for i, page in enumerate(doc):
+            if i >= max_pages: break
+            pix = page.get_pixmap(dpi=dpi)
             img = Image.open(io.BytesIO(pix.tobytes("png")))
-            ocr_parts.append(_ocr_image(img))
-    except Exception:
-        pass
-    return "\n".join(ocr_parts).strip()
+            ocr.append(_ocr_image(img))
+    except Exception: pass
+    return "\n".join(ocr).strip()
 
 @app.post("/extract-file", response_model=AnalysisResponse)
 async def extract_file(file: UploadFile = File(...)):
-    if file.content_type not in {"application/pdf", "image/png", "image/jpeg"}:
+    if file.content_type not in ALLOWED_CT:
         raise HTTPException(415, "Only PDF, PNG, or JPG allowed")
-
     raw = await file.read()
-    if file.content_type == "application/pdf":
+
+    # Treat octet-stream PDFs by magic header
+    is_pdf = file.content_type=="application/pdf" or raw[:4]==b"%PDF"
+    if is_pdf:
         text = _extract_text_from_pdf(raw)
     else:
         img = Image.open(io.BytesIO(raw))
@@ -180,14 +196,10 @@ async def extract_file(file: UploadFile = File(...)):
 
     result = parse_free_text(text)
     if not result.items:
-        # We read the file but didn't recognize lab values—return 200 with a helpful summary.
         return AnalysisResponse(
-            items=[],
-            summary="We could read the file, but didn't detect recognizable lab values.",
-            notes=[
-                "Try a sharper scan or a digital PDF.",
-                "Supported examples: 'Glucose 108 mg/dL', 'ALT 42 U/L', 'AST 35 U/L', 'Hemoglobin 14.1 g/dL'."
-            ],
+            items=[], summary="We could read the file, but didn't detect recognizable lab values.",
+            notes=["Try a sharper scan or a digital PDF.",
+                   "Supported examples: 'Glucose 108 mg/dL', 'ALT 42 U/L', 'AST 35 U/L', 'Hemoglobin 14.1 g/dL'."]
         )
     return result
 
@@ -200,7 +212,9 @@ from fastapi import Query
 @app.post("/debug-ocr")
 async def debug_ocr(file: UploadFile = File(...), maxchars: int = Query(500)):
     raw = await file.read()
-    if file.content_type == "application/pdf":
+    # Treat octet-stream PDFs by magic header
+    is_pdf = file.content_type=="application/pdf" or raw[:4]==b"%PDF"
+    if is_pdf:
         text = _extract_text_from_pdf(raw)
     elif file.content_type in {"image/png","image/jpeg"}:
         img = Image.open(io.BytesIO(raw))

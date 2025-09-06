@@ -1,0 +1,68 @@
+Open backend/app/main.py and update:
+
+# allow 'octet-stream' and detect pdf by header
+ALLOWED_CT = {"application/pdf","image/png","image/jpeg","application/octet-stream"}
+
+def _extract_text_from_pdf(raw: bytes, max_pages=8, dpi=300) -> str:
+    import io, fitz, pdfplumber
+    from PIL import Image
+    parts = []
+
+    # Pass A: PyMuPDF embedded text (very reliable)
+    try:
+        doc = fitz.open(stream=raw, filetype="pdf")
+        for i, page in enumerate(doc):
+            if i >= max_pages: break
+            t = page.get_text("text") or ""
+            if t.strip(): parts.append(t)
+    except Exception: pass
+    if len(" ".join(parts)) >= 60:
+        return "\n".join(parts)
+
+    # Pass B: pdfplumber (sometimes different layout wins)
+    try:
+        with pdfplumber.open(io.BytesIO(raw)) as pdf:
+            for p in pdf.pages[:max_pages]:
+                t = p.extract_text() or ""
+                if t.strip(): parts.append(t)
+    except Exception: pass
+    if len(" ".join(parts)) >= 60:
+        return "\n".join(parts)
+
+    # Pass C: rasterize + OCR (fallback)
+    ocr = []
+    try:
+        doc = fitz.open(stream=raw, filetype="pdf")
+        for i, page in enumerate(doc):
+            if i >= max_pages: break
+            pix = page.get_pixmap(dpi=dpi)
+            img = Image.open(io.BytesIO(pix.tobytes("png")))
+            ocr.append(_ocr_image(img))
+    except Exception: pass
+    return "\n".join(ocr).strip()
+
+@app.post("/extract-file", response_model=AnalysisResponse)
+async def extract_file(file: UploadFile = File(...)):
+    if file.content_type not in ALLOWED_CT:
+        raise HTTPException(415, "Only PDF, PNG, or JPG allowed")
+    raw = await file.read()
+
+    # Treat octet-stream PDFs by magic header
+    is_pdf = file.content_type=="application/pdf" or raw[:4]==b"%PDF"
+    if is_pdf:
+        text = _extract_text_from_pdf(raw)
+    else:
+        img = Image.open(io.BytesIO(raw))
+        text = _ocr_image(img)
+
+    if not text or len(text.strip()) < 10:
+        raise HTTPException(400, "Could not extract text from file")
+
+    result = parse_free_text(text)
+    if not result.items:
+        return AnalysisResponse(
+            items=[], summary="We could read the file, but didn’t detect recognizable lab values.",
+            notes=["Try a sharper scan or a digital PDF.",
+                   "Supported examples: 'Glucose 108 mg/dL', 'ALT 42 U/L', 'AST 35 U/L', 'Hemoglobin 14.1 g/dL'."]
+        )
+    return result

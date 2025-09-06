@@ -21,13 +21,18 @@ const Home = () => {
         <div className="w-full max-w-sm mx-auto text-center space-y-12">
           {/* Hero Section */}
           <div className="space-y-6">
-            <h2 className="text-4xl font-bold text-[#111111] leading-tight" data-testid="hero-headline">
-              Understand your lab results in plain language.
-            </h2>
+            <div className="space-y-3">
+              <h2 className="text-4xl font-bold text-[#111111] leading-tight" data-testid="hero-headline">
+                Your lab results, made clear.
+              </h2>
+              <p className="text-lg text-[#666666] leading-relaxed">
+                Upload a PDF or photo. Get plain-language explanations in seconds.
+              </p>
+            </div>
           </div>
 
-          {/* Upload Card */}
-          <div>
+          {/* Action Buttons */}
+          <div className="space-y-4">
             <UploadCard />
           </div>
 

@@ -88,30 +88,47 @@ const UploadCard: React.FC = () => {
 
   const isProcessing = loading || ctx.explaining;
 
+  const triggerFileInput = () => {
+    document.getElementById('file-input')?.click();
+  };
+
   return (
-    <div className="rounded-xl shadow-sm p-4 bg-white space-y-3">
-      <label className="block text-sm font-medium">{t("upload.label")}</label>
+    <div className="space-y-4">
+      {/* Hidden file input */}
       <input 
+        id="file-input"
         type="file" 
         accept=".pdf,.jpg,.jpeg,.png" 
         onChange={(e) => e.target.files?.[0] && handleFile(e)} 
-        className="block w-full text-sm"
+        className="hidden"
         disabled={isProcessing}
       />
-      {loading && <div className="text-xs text-gray-500">Processing…</div>}
-      <div className="flex justify-center pt-2">
+      
+      {/* Primary CTA - Upload Report */}
+      <button
+        onClick={triggerFileInput}
+        className="w-full py-4 px-6 bg-[#007aff] text-white text-lg font-semibold rounded-xl hover:bg-[#0056b3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={isProcessing}
+        data-testid="button-upload-report"
+      >
+        {isProcessing ? "Processing..." : "Upload report"}
+      </button>
+
+      {/* Secondary CTA - Try Demo */}
+      <div className="flex justify-center">
         <button
           onClick={handleDemo}
-          className="text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50 disabled:opacity-50"
+          className="px-6 py-2 text-[#007aff] text-sm font-medium border border-[#007aff] rounded-full hover:bg-[#007aff] hover:text-white transition-colors duration-200 disabled:opacity-50"
           disabled={isProcessing}
+          data-testid="button-try-demo"
         >
-          Try Demo (no upload)
+          Try demo
         </button>
       </div>
-      <div id="upload-status" className="text-xs text-gray-500">
-        {isProcessing && t("results.loadingExplain")}
-      </div>
-      {err && <div className="text-sm text-amber-700">{err}</div>}
+
+      {/* Status and Errors */}
+      {loading && <div className="text-xs text-gray-500 text-center">Processing…</div>}
+      {err && <div className="text-sm text-amber-700 text-center">{err}</div>}
     </div>
   );
 };

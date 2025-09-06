@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "web", "postgresql-16", "python-3.11"]
+modules = ["nodejs-20", "web", "python-3.11"]
 run = "bash -lc './dev.sh'"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
@@ -28,35 +28,13 @@ exposeLocalhost = true
 PORT = "5000"
 
 [workflows]
-runButton = "DevOps Fix"
+runButton = "Dev Server"
 
 [[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start application"
-
-[[workflows.workflow]]
-name = "Start application"
-author = "agent"
+name = "Dev Server"
+author = "user"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "bash -lc './dev.sh'"
 waitForPort = 5000
-
-[[workflows.workflow]]
-name = "DevOps Fix"
-author = 37537024
-mode = "parallel"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd frontend && npm run dev"

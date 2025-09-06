@@ -37,6 +37,36 @@ const UploadCard: React.FC = () => {
     }
   }
 
+  async function handleDemo() {
+    setExplaining(true);
+    setErr(null);
+    try {
+      // Simple local demo payload
+      const demoExtract = {
+        text: "Hemoglobin 14.1 g/dL\nALT 62 U/L\nFerritin 380 ng/mL",
+        fields: [
+          { analyte: "Hemoglobin", value: 14.1, unit: "g/dL" },
+          { analyte: "ALT", value: 62, unit: "U/L" },
+          { analyte: "Ferritin", value: 380, unit: "ng/mL" },
+        ],
+        warnings: [],
+      };
+      setExtracted(demoExtract);
+      const items = demoExtract.fields.map((f: any) => ({ 
+        analyte: f.analyte, 
+        value: f.value, 
+        unit: f.unit 
+      }));
+      const explained = await postExplain(items);
+      setExplained(explained);
+      navigate("/results");
+    } catch (e) { 
+      setErr("Demo failed. Please try again."); 
+    } finally { 
+      setExplaining(false); 
+    }
+  }
+
   return (
     <div className="rounded-xl shadow-sm p-4 bg-white space-y-3">
       <label className="block text-sm font-medium">{t("upload.label")}</label>
@@ -47,6 +77,15 @@ const UploadCard: React.FC = () => {
         className="block w-full text-sm"
         disabled={explaining}
       />
+      <div className="flex justify-center pt-2">
+        <button
+          onClick={handleDemo}
+          className="text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50"
+          disabled={explaining}
+        >
+          Try Demo (no upload)
+        </button>
+      </div>
       <div id="upload-status" className="text-xs text-gray-500">
         {explaining && t("results.loadingExplain")}
       </div>

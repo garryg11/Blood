@@ -1,0 +1,217 @@
+
+{
+  "analytes": [
+    {
+      "name": "Hemoglobin",
+      "key": "hemoglobin",
+      "unit": "g/dL",
+      "ranges": [
+        {
+          "sex": "m",
+          "ageMin": 18,
+          "low": 13.5,
+          "high": 17.5
+        },
+        {
+          "sex": "f",
+          "ageMin": 18,
+          "low": 12.0,
+          "high": 16.0
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/hemoglobin-test/about/pac-20385075"
+      ]
+    },
+    {
+      "name": "White Blood Cells",
+      "key": "wbc",
+      "unit": "10³/µL",
+      "ranges": [
+        {
+          "sex": "any",
+          "ageMin": 18,
+          "low": 4.0,
+          "high": 11.0
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/complete-blood-count/about/pac-20384919"
+      ]
+    },
+    {
+      "name": "Platelets",
+      "key": "platelets",
+      "unit": "10³/µL",
+      "ranges": [
+        {
+          "sex": "any",
+          "ageMin": 18,
+          "low": 150,
+          "high": 450
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/complete-blood-count/about/pac-20384919"
+      ]
+    },
+    {
+      "name": "ALT",
+      "key": "alt",
+      "unit": "U/L",
+      "ranges": [
+        {
+          "sex": "m",
+          "ageMin": 18,
+          "low": 7,
+          "high": 41
+        },
+        {
+          "sex": "f",
+          "ageMin": 18,
+          "low": 7,
+          "high": 33
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/liver-function-tests/about/pac-20394595"
+      ]
+    },
+    {
+      "name": "AST",
+      "key": "ast",
+      "unit": "U/L",
+      "ranges": [
+        {
+          "sex": "m",
+          "ageMin": 18,
+          "low": 8,
+          "high": 40
+        },
+        {
+          "sex": "f",
+          "ageMin": 18,
+          "low": 8,
+          "high": 32
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/liver-function-tests/about/pac-20394595"
+      ]
+    },
+    {
+      "name": "GGT",
+      "key": "ggt",
+      "unit": "U/L",
+      "ranges": [
+        {
+          "sex": "m",
+          "ageMin": 18,
+          "low": 15,
+          "high": 73
+        },
+        {
+          "sex": "f",
+          "ageMin": 18,
+          "low": 15,
+          "high": 43
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/liver-function-tests/about/pac-20394595"
+      ]
+    },
+    {
+      "name": "Ferritin",
+      "key": "ferritin",
+      "unit": "ng/mL",
+      "ranges": [
+        {
+          "sex": "m",
+          "ageMin": 18,
+          "low": 20,
+          "high": 250
+        },
+        {
+          "sex": "f",
+          "ageMin": 18,
+          "low": 10,
+          "high": 120
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/ferritin-test/about/pac-20384928"
+      ]
+    },
+    {
+      "name": "Creatinine",
+      "key": "creatinine",
+      "unit": "mg/dL",
+      "ranges": [
+        {
+          "sex": "m",
+          "ageMin": 18,
+          "low": 0.74,
+          "high": 1.35
+        },
+        {
+          "sex": "f",
+          "ageMin": 18,
+          "low": 0.59,
+          "high": 1.04
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/creatinine-test/about/pac-20384646"
+      ]
+    },
+    {
+      "name": "eGFR",
+      "key": "egfr",
+      "unit": "mL/min/1.73m²",
+      "ranges": [
+        {
+          "sex": "any",
+          "ageMin": 18,
+          "low": 60,
+          "high": 120
+        }
+      ],
+      "sources": [
+        "https://www.kidney.org/atoz/content/gfr"
+      ]
+    },
+    {
+      "name": "CRP",
+      "key": "crp",
+      "unit": "mg/L",
+      "ranges": [
+        {
+          "sex": "any",
+          "ageMin": 18,
+          "low": 0,
+          "high": 3.0
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/c-reactive-protein-test/about/pac-20384535"
+      ]
+    },
+    {
+      "name": "Glucose (Fasting)",
+      "key": "glucose_fasting",
+      "unit": "mg/dL",
+      "ranges": [
+        {
+          "sex": "any",
+          "ageMin": 18,
+          "low": 70,
+          "high": 100
+        }
+      ],
+      "sources": [
+        "https://www.mayoclinic.org/tests-procedures/blood-glucose-test/about/pac-20384446"
+      ]
+    }
+  ]
+}

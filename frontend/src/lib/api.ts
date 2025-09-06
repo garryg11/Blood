@@ -1,10 +1,11 @@
 
-export const API = (import.meta.env.VITE_API_BASE ?? "").trim();
+// Use relative API base for proxy
+const API_BASE = "/api";
 
 export async function postExtract(file: File) {
   const form = new FormData();
   form.append("file", file);
-  const res = await fetch(`${API}/extract`, {
+  const res = await fetch(`${API_BASE}/extract`, {
     method: "POST",
     body: form,
   });
@@ -12,10 +13,19 @@ export async function postExtract(file: File) {
 }
 
 export async function postExplain(items: any[]) {
-  const res = await fetch(`${API}/explain`, {
+  const res = await fetch(`${API_BASE}/explain`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ items }),
   });
   return res.json();
+}
+
+export async function postExport(items: any[], format: string) {
+  const res = await fetch(`${API_BASE}/export`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items, format }),
+  });
+  return res.blob();
 }

@@ -4,11 +4,11 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
-    "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "build": "cd frontend && npm run build",
+    "dev": "cd frontend && vite --host 0.0.0.0 --port $PORT & cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
+    "test": "cd backend && python -m pytest",
+    "start": "cd frontend && npm run preview"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.1",

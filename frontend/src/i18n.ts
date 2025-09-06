@@ -31,6 +31,9 @@ const resources = {
       },
       nav: {
         goUpload: "Go to Upload"
+      },
+      upload: {
+        label: "Upload PDF/Image"
       }
     } 
   },
@@ -62,6 +65,9 @@ const resources = {
       },
       nav: {
         goUpload: "Zum Upload gehen"
+      },
+      upload: {
+        label: "PDF/Bild hochladen"
       }
     } 
   }

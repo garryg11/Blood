@@ -1,11 +1,13 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { postExtract, postExplain } from "../lib/api";
 import { useResults } from "../store/results";
 
 const UploadCard: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { setExtracted, setExplained, setExplaining } = useResults();
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -35,7 +37,7 @@ const UploadCard: React.FC = () => {
 
   return (
     <div className="rounded-xl shadow-sm p-4 bg-white space-y-3">
-      <label className="block text-sm font-medium">Upload PDF/Image</label>
+      <label className="block text-sm font-medium">{t("upload.label")}</label>
       <input
         type="file"
         accept=".pdf,.jpg,.jpeg,.png"

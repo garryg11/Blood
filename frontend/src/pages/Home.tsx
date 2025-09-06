@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import UploadCard from '../components/UploadCard';
 import ManualEntryLink from '../components/ManualEntryLink';
 import LangSwitch from '../components/LangSwitch';
 
 const Home = () => {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   return (
     <div className="min-h-screen bg-[#f9f9f9] flex flex-col">
       {/* Top Bar */}
@@ -33,7 +36,13 @@ const Home = () => {
 
           {/* Action Buttons */}
           <div className="space-y-4">
-            <UploadCard />
+            <UploadCard setBusy={setBusy} setErr={setErr} />
+            {/* Error Display */}
+            {err && (
+              <div className="text-xs text-red-600 text-center">
+                {err}
+              </div>
+            )}
             {/* Privacy Notice */}
             <div className="text-xs text-gray-500 text-center">
               Private by design. Files aren't stored.
@@ -53,6 +62,13 @@ const Home = () => {
           PlainSpeak Labs does not provide medical advice.
         </div>
       </footer>
+
+      {/* Overlay Spinner */}
+      {busy && (
+        <div style={{position:"fixed",inset:0,background:"rgba(255,255,255,.6)",display:"grid",placeItems:"center"}}>
+          Analyzing…
+        </div>
+      )}
     </div>
   );
 };

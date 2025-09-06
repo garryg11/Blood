@@ -6,7 +6,7 @@ import { postExplain } from "../lib/api";
 import { useResults } from "../store/results";
 import Dropzone from "./Dropzone";
 
-const UploadCard: React.FC = () => {
+const UploadCard: React.FC<{setBusy?: (busy: boolean) => void; setErr?: (err: string | null) => void}> = ({ setBusy, setErr: setPageErr }) => {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -31,6 +31,8 @@ const UploadCard: React.FC = () => {
   async function handleUpload(file: File) {
     // When starting work
     setErr(null);
+    setPageErr?.(null);
+    setBusy?.(true);
     setLoading(true);
     setExplaining(true);
     
@@ -40,9 +42,10 @@ const UploadCard: React.FC = () => {
       setExplained(data);
       navigate("/results");
     } catch (e: any) {
-      setErr("We couldn't process that file. Please try another or use Manual Entry.");
+      setPageErr?.("We couldn't read that file. Try a clearer scan or PDF.");
     } finally {
       // When finishing (both in success/finally blocks)
+      setBusy?.(false);
       setLoading(false);
       setExplaining(false);
     }
@@ -51,6 +54,8 @@ const UploadCard: React.FC = () => {
   async function handleDemo() {
     // When starting work
     setErr(null);
+    setPageErr?.(null);
+    setBusy?.(true);
     setLoading(true);
     setExplaining(true);
     
@@ -75,9 +80,10 @@ const UploadCard: React.FC = () => {
       setExplained(explained);
       navigate("/results");
     } catch (e) { 
-      setErr("Demo failed. Please try again."); 
+      setPageErr?.("Demo failed. Please try again."); 
     } finally { 
       // When finishing (both in success/finally blocks)
+      setBusy?.(false);
       setLoading(false);
       setExplaining(false); 
     }

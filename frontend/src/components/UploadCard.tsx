@@ -48,7 +48,7 @@ const UploadCard: React.FC = () => {
         disabled={explaining}
       />
       <div id="upload-status" className="text-xs text-gray-500">
-        {explaining && "Processing file..."}
+        {explaining && t("results.loadingExplain")}
       </div>
       {err && <div className="text-sm text-amber-700">{err}</div>}
     </div>

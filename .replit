@@ -27,7 +27,7 @@ externalPort = 8000
 PORT = "5000"
 
 [workflows]
-runButton = "Project"
+runButton = "DevOps Fix"
 
 [[workflows.workflow]]
 name = "Project"
@@ -46,3 +46,16 @@ author = "agent"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "DevOps Fix"
+author = 37537024
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd frontend && npm run dev"

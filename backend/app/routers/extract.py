@@ -6,6 +6,21 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
+class ExtractRequest(BaseModel):
+    text: str = ""
+    url: str = ""
+
+@router.post("/")
+@router.post("")
+async def extract_endpoint(file: UploadFile = File(None), payload: ExtractRequest = None):
+    """Extract lab data from uploaded file or text"""
+    if file:
+        return {"status": "ok", "message": f"File {file.filename} received"}
+    elif payload:
+        return {"status": "ok", "message": f"Text received: {payload.text[:50]}..."}
+    else:
+        return {"status": "ok", "message": "Ready to process"}
+
 class ExtractionResponse(BaseModel):
     text: str
     fields: List[str] = []

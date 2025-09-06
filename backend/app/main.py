@@ -10,8 +10,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:5000",
         "http://localhost:5173",
+        "http://127.0.0.1:5000",
         "http://127.0.0.1:5173",
+        "http://172.31.73.66:5000",
         "http://172.31.73.66:5173",  # optional: Vite "Network" URL shown in logs
     ],
     allow_credentials=True,

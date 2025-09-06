@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { postExtract, postExplain } from "../lib/api";
+import { postExplain } from "../lib/api";
 import { useResults } from "../store/results";
 
 const UploadCard: React.FC = () => {
@@ -17,6 +17,16 @@ const UploadCard: React.FC = () => {
   const setExplained = ctx.setExplained || (() => {});
   const setExplaining = typeof ctx.setExplaining === "function" ? ctx.setExplaining : () => {};
 
+  const onUpload = async (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/extract-file", { method: "POST", body: fd });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    ctx.setResults(data); // render in your Results table
+    return data;
+  };
+
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files?.length) return;
     
@@ -28,17 +38,9 @@ const UploadCard: React.FC = () => {
     const file = e.target.files[0];
     
     try {
-      const extractJson = await postExtract(file);
-      setExtracted(extractJson);
-      
-      const items = (extractJson?.fields || []).map((f: any) => ({
-        analyte: f.analyte, 
-        value: f.value, 
-        unit: f.unit,
-      }));
-      
-      const explainJson = await postExplain(items);
-      setExplained(explainJson);
+      const data = await onUpload(file);
+      setExtracted(data);
+      setExplained(data);
       navigate("/results");
     } catch (e: any) {
       setErr("We couldn't process that file. Please try another or use Manual Entry.");
@@ -92,7 +94,7 @@ const UploadCard: React.FC = () => {
       <input 
         type="file" 
         accept=".pdf,.jpg,.jpeg,.png" 
-        onChange={handleFile} 
+        onChange={(e) => e.target.files?.[0] && handleFile(e)} 
         className="block w-full text-sm"
         disabled={isProcessing}
       />

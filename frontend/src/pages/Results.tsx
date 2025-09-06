@@ -56,7 +56,7 @@ const Results: React.FC = () => {
               {t("results.partial")}
             </div>
           )}
-          <AnalyteTable rows={explained.items} />
+          <AnalyteTable rows={explained.items} summary={explained.summary} />
         </>
       ) : (
         <AnalyteTable rows={extracted.fields || []} />

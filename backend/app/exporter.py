@@ -32,3 +32,11 @@ def build_summary_pdf(*, app_name: str, locale: str, extracted_text: str, explai
     c.setFont("Helvetica-Oblique", 9)
     writeln(disclaimer, size=9, leading=12)
     y -= 6
+
+    # Extracted text (snippet)
+    c.setFont("Helvetica-Bold", 12)
+    writeln("Extracted Text", size=12, leading=16)
+    c.setFont("Helvetica", 9)
+    snippet = (extracted_text or "")[:800]
+    writeln(snippet or "(none)", size=9, leading=12)
+    y -= 6

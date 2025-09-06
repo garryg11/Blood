@@ -34,6 +34,10 @@ const Home = () => {
           {/* Action Buttons */}
           <div className="space-y-4">
             <UploadCard />
+            {/* Privacy Notice */}
+            <div className="text-xs text-gray-500 text-center">
+              Private by design. Files aren't stored.
+            </div>
           </div>
 
           {/* Manual Entry Link */}
@@ -42,6 +46,13 @@ const Home = () => {
           </div>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="w-full py-4 px-6 text-center">
+        <div className="text-xs text-gray-400">
+          PlainSpeak Labs does not provide medical advice.
+        </div>
+      </footer>
     </div>
   );
 };

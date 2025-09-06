@@ -99,6 +99,28 @@ async def extract(payload: ExtractRequest):
 
 
 
+from fastapi import UploadFile, File, HTTPException
+import io
+import pdfplumber
+from PIL import Image
+import pytesseract
+
+@app.post("/extract-file", response_model=AnalysisResponse)
+async def extract_file(file: UploadFile = File(...)):
+    if file.content_type not in {"application/pdf","image/png","image/jpeg"}:
+        raise HTTPException(415, "Only PDF/PNG/JPG allowed")
+    raw = await file.read()
+    text = ""
+    if file.content_type == "application/pdf":
+        with pdfplumber.open(io.BytesIO(raw)) as pdf:
+            text = "\n".join((p.extract_text() or "") for p in pdf.pages)
+    else:
+        img = Image.open(io.BytesIO(raw))
+        text = pytesseract.image_to_string(img)
+    if not text or not text.strip():
+        raise HTTPException(400, "Could not extract text from file")
+    return parse_free_text(text)
+
 @app.get("/health")
 def health_check(): 
     return {"status":"ok"}

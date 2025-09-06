@@ -24,6 +24,13 @@ const resources = {
         noText: "No summary available",
         showMore: "Show more",
         showLess: "Show less"
+      },
+      results: {
+        loadingExplain: "Analyzing values…",
+        partial: "Some items couldn't be explained."
+      },
+      nav: {
+        goUpload: "Go to Upload"
       }
     } 
   },
@@ -48,6 +55,13 @@ const resources = {
         noText: "Keine Zusammenfassung verfügbar",
         showMore: "Mehr anzeigen",
         showLess: "Weniger anzeigen"
+      },
+      results: {
+        loadingExplain: "Werte werden analysiert…",
+        partial: "Einige Elemente konnten nicht erklärt werden."
+      },
+      nav: {
+        goUpload: "Zum Upload gehen"
       }
     } 
   }

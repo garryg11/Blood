@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import extract
 from .routers import explain
+from .routers import export as export_router
 
 app = FastAPI()
 
@@ -17,6 +18,7 @@ app.add_middleware(
 # Include routers
 app.include_router(extract.router, prefix="/extract")
 app.include_router(explain.router, prefix="")
+app.include_router(export_router.router, prefix="")
 
 @app.get("/health")
 def health(): 

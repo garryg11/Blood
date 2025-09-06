@@ -19,3 +19,16 @@ def build_summary_pdf(*, app_name: str, locale: str, extracted_text: str, explai
         for line in text.split("\n"):
             c.drawString(x, y, line)
             y -= leading
+
+    # Header
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(x, y, f"{app_name} — Summary")
+    y -= 20
+    c.setFont("Helvetica", 9)
+    c.drawString(x, y, datetime.now().strftime("%Y-%m-%d %H:%M"))
+    y -= 18
+
+    # Disclaimer
+    c.setFont("Helvetica-Oblique", 9)
+    writeln(disclaimer, size=9, leading=12)
+    y -= 6

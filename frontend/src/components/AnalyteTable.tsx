@@ -24,42 +24,37 @@ const AnalyteTable: React.FC<{ rows?: Row[] }> = ({ rows }) => {
 
   return (
     <section className="space-y-3">
-      <h2 className="text-base font-semibold">{t("table.heading")}</h2>
-      {rows.map((row, i) => (
-        <div key={i} className="rounded-xl bg-white shadow-sm p-4">
-          <div className="flex justify-between items-start mb-2">
-            <div className="font-medium">{row.analyte}</div>
+      {rows.map((r, idx) => (
+        <div key={idx} className="rounded-xl bg-white shadow-sm p-4">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold">{r.analyte}</span>
             <div className="flex items-center gap-2">
-              <span className="text-sm">
-                {row.value !== undefined ? row.value : "—"}
-                {row.unit && <span className="text-gray-500 ml-1">{row.unit}</span>}
+              <span>{r.value !== undefined ? r.value : "—"}
+                {r.unit && <span className="text-gray-500 ml-1">{r.unit}</span>}
               </span>
-              <LevelBadge level={row.level} />
-              <FlagChip flag={row.flag} />
+              <LevelBadge level={r.level} />
+              <FlagChip flag={r.flag} />
             </div>
           </div>
-
-          {row.refRange && (row.refRange.low !== undefined || row.refRange.high !== undefined) && (
-            <div className="text-xs text-gray-500 mb-2">
-              {t("table.range")}: {row.refRange.low ?? "—"}–{row.refRange.high ?? "—"}{row.refRange.unit ? ` ${row.refRange.unit}` : ""}
+          {r.refRange && (row.refRange.low !== undefined || row.refRange.high !== undefined) && (
+            <div className="text-xs text-gray-500">
+              {t("table.range")}: {r.refRange.low ?? "—"}–{r.refRange.high ?? "—"} {r.refRange.unit ? ` ${r.refRange.unit}` : ""}
             </div>
           )}
-
-          {row.message && (
-            <div className="text-sm text-gray-600 mb-2">{row.message}</div>
+          {r.message && (
+            <div className="text-sm text-gray-600 mb-2">{r.message}</div>
           )}
-
-          {row.sources && row.sources.length > 0 && (
+          {r.sources && r.sources.length > 0 && (
             <div className="mt-2">
               <button
-                onClick={() => setOpenRow(openRow === i ? null : i)}
+                onClick={() => setOpenRow(openRow === idx ? null : idx)}
                 className="text-sm text-blue-600 underline"
               >
-                {openRow === i ? t("table.hideSources") : t("table.showSources")}
+                {openRow === idx ? t("table.hideSources") : t("table.showSources")}
               </button>
-              {openRow === i && (
+              {openRow === idx && (
                 <div className="mt-2 space-y-1">
-                  {row.sources.map((src, j) => (
+                  {r.sources.map((src, j) => (
                     <div key={j}>
                       <a
                         href={src}

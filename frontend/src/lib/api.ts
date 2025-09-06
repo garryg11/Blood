@@ -12,6 +12,15 @@ export async function postExtract(file: File) {
   return res.json();
 }
 
+export async function postExtractText(text: string) {
+  const res = await fetch(`${API_BASE}/extract`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  return res.json();
+}
+
 export async function postExplain(items: any[]) {
   const res = await fetch(`${API_BASE}/explain`, {
     method: "POST",

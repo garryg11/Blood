@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { postExplain } from "../lib/api";
 import { useResults } from "../store/results";
+import Dropzone from "./Dropzone";
 
 const UploadCard: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -27,15 +28,11 @@ const UploadCard: React.FC = () => {
     return data;
   };
 
-  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!e.target.files?.length) return;
-    
+  async function handleUpload(file: File) {
     // When starting work
     setErr(null);
     setLoading(true);
     setExplaining(true);
-    
-    const file = e.target.files[0];
     
     try {
       const data = await onUpload(file);
@@ -88,31 +85,10 @@ const UploadCard: React.FC = () => {
 
   const isProcessing = loading || ctx.explaining;
 
-  const triggerFileInput = () => {
-    document.getElementById('file-input')?.click();
-  };
-
   return (
     <div className="space-y-4">
-      {/* Hidden file input */}
-      <input 
-        id="file-input"
-        type="file" 
-        accept=".pdf,.jpg,.jpeg,.png" 
-        onChange={(e) => e.target.files?.[0] && handleFile(e)} 
-        className="hidden"
-        disabled={isProcessing}
-      />
-      
-      {/* Primary CTA - Upload Report */}
-      <button
-        onClick={triggerFileInput}
-        className="w-full py-4 px-6 bg-[#007aff] text-white text-lg font-semibold rounded-xl hover:bg-[#0056b3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled={isProcessing}
-        data-testid="button-upload-report"
-      >
-        {isProcessing ? "Processing..." : "Upload report"}
-      </button>
+      {/* Dropzone for file upload */}
+      <Dropzone onFile={handleUpload} />
 
       {/* Secondary CTA - Try Demo */}
       <div className="flex justify-center">

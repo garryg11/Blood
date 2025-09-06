@@ -1,8 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import extract
-from .routers import explain
-from .routers import export as export_router
 
 app = FastAPI()
 
@@ -27,18 +24,80 @@ app.add_middleware(
 def health():
     return {"status": "ok"}
 
-# Direct extract endpoints (both forms)
-@app.post("/extract")
-@app.post("/extract/")
-async def extract_direct(file: UploadFile = File(None), demo: bool = Query(False)):
-    """Direct extract endpoint - forwards to extract router logic"""
-    from .routers.extract import extract_text
-    return await extract_text(file=file, demo=demo)
+from typing import List, Optional, Literal
+from pydantic import BaseModel
+import re
 
-# Include routers
-app.include_router(extract.router, prefix="/extract")
-app.include_router(explain.router, prefix="")
-app.include_router(export_router.router, prefix="")
+class ExtractRequest(BaseModel):
+    text: Optional[str] = None
+
+class LabItem(BaseModel):
+    name: str
+    value: float
+    unit: str
+    ref_low: Optional[float] = None
+    ref_high: Optional[float] = None
+    flag: Literal["low","normal","high","unknown"] = "unknown"
+    explanation: str = ""
+
+class AnalysisResponse(BaseModel):
+    items: List[LabItem]
+    summary: str
+    notes: List[str] = []
+
+REFS = {
+    "Glucose": (70, 99, "mg/dL"),
+    "ALT": (7, 55, "U/L"),
+    "AST": (8, 48, "U/L"),
+    "Hemoglobin": (13.5, 17.5, "g/dL"),
+}
+
+def analyze_pairs(pairs):
+    items, hi, lo = [], 0, 0
+    for name, value, unit in pairs:
+        low, high, ref_unit = REFS.get(name, (None, None, unit))
+        flag = "unknown"
+        if low is not None and high is not None:
+            if value < low: flag, lo = "low", lo + 1
+            elif value > high: flag, hi = "high", hi + 1
+            else: flag = "normal"
+        items.append(LabItem(
+            name=name, value=value, unit=unit,
+            ref_low=low, ref_high=high, flag=flag,
+            explanation=("Within normal range." if flag=="normal"
+                         else "Below the typical reference range." if flag=="low"
+                         else ("Slightly above the typical range; consider a fasting re-test."
+                               if name=="Glucose" and flag=="high" else "Above the typical range.")
+                         if flag=="high" else "No reference range available.")
+        ))
+    total = len(items)
+    summary = f"{hi} high, {lo} low, {total - hi - lo} normal."
+    return AnalysisResponse(items=items, summary=summary, notes=[])
+
+def parse_free_text(text: str):
+    # Tiny parser for patterns like: "Glucose 108 mg/dL, ALT 42 U/L"
+    pattern = r'(Glucose|ALT|AST|Hemoglobin)\s*[:\-]?\s*([0-9]+(?:\.[0-9]+)?)\s*([A-Za-z/%]+)'
+    pairs = []
+    for m in re.finditer(pattern, text, flags=re.I):
+        name = m.group(1).title()
+        value = float(m.group(2))
+        unit = m.group(3)
+        pairs.append((name, value, unit))
+    return analyze_pairs(pairs)
+
+@app.get("/demo", response_model=AnalysisResponse)
+def demo():
+    return analyze_pairs([("Glucose",108,"mg/dL"), ("ALT",42,"U/L")])
+
+@app.post("/extract", response_model=AnalysisResponse)
+@app.post("/extract/", response_model=AnalysisResponse)
+async def extract(payload: ExtractRequest):
+    from fastapi import HTTPException
+    if not payload.text:
+        raise HTTPException(status_code=400, detail="Provide 'text' for now (file upload path comes next).")
+    return parse_free_text(payload.text)
+
+
 
 @app.get("/health")
 def health_check(): 

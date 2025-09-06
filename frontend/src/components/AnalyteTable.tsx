@@ -36,7 +36,7 @@ const AnalyteTable: React.FC<{ rows?: Row[] }> = ({ rows }) => {
               <FlagChip flag={r.flag} />
             </div>
           </div>
-          {r.refRange && (row.refRange.low !== undefined || row.refRange.high !== undefined) && (
+          {r.refRange && (r.refRange.low !== undefined || r.refRange.high !== undefined) && (
             <div className="text-xs text-gray-500">
               {t("table.range")}: {r.refRange.low ?? "—"}–{r.refRange.high ?? "—"} {r.refRange.unit ? ` ${r.refRange.unit}` : ""}
             </div>

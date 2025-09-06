@@ -34,6 +34,9 @@ const resources = {
       },
       upload: {
         label: "Upload PDF/Image"
+      },
+      export: {
+        pdf: "Export PDF"
       }
     } 
   },
@@ -68,6 +71,9 @@ const resources = {
       },
       upload: {
         label: "PDF/Bild hochladen"
+      },
+      export: {
+        pdf: "PDF exportieren"
       }
     } 
   }

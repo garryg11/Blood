@@ -42,7 +42,7 @@ const Results: React.FC = () => {
           className="text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50"
           disabled={!explained}
         >
-          Export PDF
+          {t("export.pdf")}
         </button>
       </div>
       {explaining && (

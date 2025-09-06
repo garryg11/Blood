@@ -6,14 +6,21 @@ import { postExtract, postExplain } from "../lib/api";
 import { useResults } from "../store/results";
 
 const UploadCard: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { setExtracted, setExplained, setExplaining, explaining } = useResults();
+
+  // Get context, but guard the setters
+  const ctx = useResults();
+  const setExtracted = ctx.setExtracted || (() => {});
+  const setExplained = ctx.setExplained || (() => {});
+  const setExplaining = typeof ctx.setExplaining === "function" ? ctx.setExplaining : () => {};
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files?.length) return;
     setErr(null);
+    setLoading(true);
     const file = e.target.files[0];
     setExplaining(true);
     
@@ -33,11 +40,13 @@ const UploadCard: React.FC = () => {
     } catch (e: any) {
       setErr("We couldn't process that file. Please try another or use Manual Entry.");
     } finally {
+      setLoading(false);
       setExplaining(false);
     }
   }
 
   async function handleDemo() {
+    setLoading(true);
     setExplaining(true);
     setErr(null);
     try {
@@ -63,9 +72,12 @@ const UploadCard: React.FC = () => {
     } catch (e) { 
       setErr("Demo failed. Please try again."); 
     } finally { 
+      setLoading(false);
       setExplaining(false); 
     }
   }
+
+  const isProcessing = loading || ctx.explaining;
 
   return (
     <div className="rounded-xl shadow-sm p-4 bg-white space-y-3">
@@ -75,19 +87,19 @@ const UploadCard: React.FC = () => {
         accept=".pdf,.jpg,.jpeg,.png" 
         onChange={handleFile} 
         className="block w-full text-sm"
-        disabled={explaining}
+        disabled={isProcessing}
       />
       <div className="flex justify-center pt-2">
         <button
           onClick={handleDemo}
-          className="text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50"
-          disabled={explaining}
+          className="text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50 disabled:opacity-50"
+          disabled={isProcessing}
         >
           Try Demo (no upload)
         </button>
       </div>
       <div id="upload-status" className="text-xs text-gray-500">
-        {explaining && t("results.loadingExplain")}
+        {isProcessing && t("results.loadingExplain")}
       </div>
       {err && <div className="text-sm text-amber-700">{err}</div>}
     </div>

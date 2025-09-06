@@ -4,10 +4,26 @@ import { useResults } from "../store/results";
 import SafetyBanner from "../components/SafetyBanner";
 import ResultSummary from "../components/ResultSummary";
 import AnalyteTable from "../components/AnalyteTable";
+import { downloadPdfFromSummary } from "../lib/download";
 
 const Results: React.FC = () => {
   const { extracted, explained, explaining } = useResults();
   const { t } = useTranslation();
+
+  const isDE = (navigator.language || "en").toLowerCase().startsWith("de");
+  const disclaimer = isDE
+    ? "Nur zu Informationszwecken — keine medizinische Beratung."
+    : "Information only — not medical advice.";
+
+  async function handleExport() {
+    await downloadPdfFromSummary({
+      locale: isDE ? "de" : "en",
+      extracted_text: extracted?.text || "",
+      explained_items: explained?.items || [],
+      app_name: "CoreVitals",
+      disclaimer,
+    });
+  }
 
   if (!extracted) {
     return (
@@ -20,6 +36,15 @@ const Results: React.FC = () => {
   return (
     <div className="p-4 space-y-4">
       <SafetyBanner />
+      <div className="flex justify-end">
+        <button
+          onClick={handleExport}
+          className="text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50"
+          disabled={!explained}
+        >
+          Export PDF
+        </button>
+      </div>
       {explaining && (
         <div className="text-sm text-gray-500">{t("results.loadingExplain")}</div>
       )}

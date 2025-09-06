@@ -96,6 +96,7 @@ const UploadCard: React.FC = () => {
         className="block w-full text-sm"
         disabled={isProcessing}
       />
+      {loading && <div className="text-xs text-gray-500">Processing…</div>}
       <div className="flex justify-center pt-2">
         <button
           onClick={handleDemo}

@@ -1,6 +1,6 @@
 
 import pytest
-from backend.app.catalog import get_ref_range, get_analyte_by_key, list_analyte_keys
+from app.catalog import get_ref_range, get_analyte_by_key, list_analyte_keys
 
 def test_get_ref_range_hemoglobin_male():
     """Test getting reference range for male hemoglobin."""

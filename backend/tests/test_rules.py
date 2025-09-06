@@ -1,6 +1,6 @@
 
 import pytest
-from backend.app.rules import classify, message_for, get_flag
+from app.rules import classify, message_for, get_flag
 
 def test_classify_low():
     """Test classification of low value."""

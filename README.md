@@ -29,6 +29,11 @@ A monorepo containing a FastAPI backend and React frontend for analyzing medical
 
    This starts both the frontend (http://localhost:3000) and backend (http://localhost:8000) concurrently.
 
+3. **Run backend tests:**
+   ```bash
+   cd backend && PYTHONPATH=. python -m pytest -v
+   ```
+
 ### API Endpoints
 
 - `GET /health` - Health check endpoint

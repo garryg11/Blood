@@ -1,15 +1,14 @@
-import { useTranslation } from 'react-i18next';
 
-const SafetyBanner = () => {
+import React from "react";
+import { useTranslation } from "react-i18next";
+
+const SafetyBanner: React.FC = () => {
   const { t } = useTranslation();
-
   return (
-    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8" data-testid="safety-banner">
-      <p className="text-yellow-800 font-medium text-lg">
-        {t('safety.infoOnly')}
-      </p>
+    <div className="bg-amber-50 text-amber-900 px-3 py-2 rounded">
+      {t("safety.infoOnly")}{" "}
+      <a href="/privacy" className="underline">{t("safety.learnMore")}</a>
     </div>
   );
 };
-
 export default SafetyBanner;

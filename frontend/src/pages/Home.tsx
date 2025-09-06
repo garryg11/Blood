@@ -11,7 +11,7 @@ const Home = () => {
       {/* Top Bar - 56px height */}
       <header className="w-full h-14 px-6 flex justify-between items-center">
         <div></div> {/* Empty left side */}
-        <h1 className="text-xl font-bold text-[#111111]" data-testid="app-title">
+        <h1 className="text-xl font-bold text-[#111111] focus:outline-auto" tabIndex={1} data-testid="app-title">
           PlainSpeak Labs
         </h1>
         <div>
